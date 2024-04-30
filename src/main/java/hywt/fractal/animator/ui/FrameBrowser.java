@@ -24,7 +24,7 @@ public class FrameBrowser extends JFrame {
         setTitle("Keyframe Browser");
         setPreferredSize(new Dimension(854, 480));
         setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
         addMouseWheelListener(new MouseWheelListener() {
             @Override

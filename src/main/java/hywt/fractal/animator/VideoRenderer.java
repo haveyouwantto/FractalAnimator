@@ -1,6 +1,7 @@
 package hywt.fractal.animator;
 
 import hywt.fractal.animator.keyframe.FractalFrame;
+import hywt.fractal.animator.keyframe.FractalScale;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import java.awt.*;
@@ -17,6 +18,7 @@ public class VideoRenderer {
     private final int height;
     private final double fps;
     private Interpolator interpolator;
+    private List<ScaleIndicator> indicators;
 
     // Multithreading
     private final ExecutorService service;
@@ -29,9 +31,11 @@ public class VideoRenderer {
         this.height = height;
         this.fps = fps;
 
+        indicators = new LinkedList<>();
+
         int processors = Runtime.getRuntime().availableProcessors();
         service = Executors.newFixedThreadPool(processors);
-        framePool = new ArrayBlockingQueue<>(processors + 1);
+        framePool = new ArrayBlockingQueue<>(processors + 2);
         for (int i = 0; i < processors + 1; i++) {
             framePool.add(new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR));
         }
@@ -63,7 +67,6 @@ public class VideoRenderer {
             while (interpolator.isInRange(zooms)) {
                 double t = frameNum * 1.0 / fps;
                 double v = interpolator.get(t);
-                System.out.println(v + " / " + zooms);
                 if (v > zooms) {
                     break;
                 }
@@ -109,6 +112,10 @@ public class VideoRenderer {
                     putImage(images[i], g2d, (factor - baseFactor) - i, bgWidth, bgHeight);
                 }
 
+                for (ScaleIndicator indicator: indicators) {
+                    indicator.draw(g2d, new FractalScale(factor), width, height);
+                }
+
                 return buffer;
             };
 
@@ -132,5 +139,13 @@ public class VideoRenderer {
         double offsetY = (bgHeight - imgHeight * scaleFactor) / 2;
 
         g2d.drawImage(image, new AffineTransform(scaleFactor, 0, 0, scaleFactor, offsetX, offsetY), null);
+    }
+
+    public void addScaleIndicator(ScaleIndicator sc){
+        indicators.add(sc);
+    }
+
+    public void removeScaleIndicator(ScaleIndicator sc){
+        indicators.remove(sc);
     }
 }
