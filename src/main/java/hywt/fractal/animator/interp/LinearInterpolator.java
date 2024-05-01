@@ -1,4 +1,4 @@
-package hywt.fractal.animator;
+package hywt.fractal.animator.interp;
 
 public class LinearInterpolator implements Interpolator {
     private double[] xValues;
@@ -23,11 +23,6 @@ public class LinearInterpolator implements Interpolator {
         }catch (ArrayIndexOutOfBoundsException e){
             return yValues[yValues.length - 1];
         }
-    }
-
-    @Override
-    public boolean isInRange(double zoom) {
-        return zoom >= yValues[0] && zoom <= yValues[yValues.length-1];
     }
 
     private int findIndex(double newX) {

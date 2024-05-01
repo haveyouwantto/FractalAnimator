@@ -2,8 +2,6 @@ package hywt.fractal.animator.keyframe;
 
 import hywt.fractal.animator.Utils;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -11,8 +9,10 @@ import java.util.List;
 public class FZKeyframeManager extends KeyframeManager {
     List<FractalFrame> frameList;
 
-    public FZKeyframeManager(File dir) {
+    public FZKeyframeManager(File dir) throws FileNotFoundException {
         File[] files = dir.listFiles((dir1, name) -> name.matches(".+ \\((\\d+)\\)\\.png$"));
+
+        if (files == null || files.length == 0) throw new FileNotFoundException("Directory invalid.");
 
         frameList = new LinkedList<>();
         Arrays.stream(files).forEach(file -> {
@@ -33,7 +33,11 @@ public class FZKeyframeManager extends KeyframeManager {
 
     @Override
     public FractalFrame get(int index) {
-        return frameList.get(index);
+        try {
+            return frameList.get(index);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     @Override
@@ -44,7 +48,8 @@ public class FZKeyframeManager extends KeyframeManager {
     @Override
     public Iterator<FractalFrame> iterator() {
         return new Iterator<FractalFrame>() {
-            int index =0;
+            int index = 0;
+
             @Override
             public boolean hasNext() {
                 return index < frameList.size();
@@ -57,17 +62,4 @@ public class FZKeyframeManager extends KeyframeManager {
         };
     }
 
-    static class FZFractalFrame extends FractalFrame {
-        public File imageFile;
-
-        FZFractalFrame(File file, FractalScale scale) {
-            this.imageFile = file;
-            this.scale = scale;
-        }
-
-        @Override
-        public BufferedImage getImage() throws IOException {
-            return ImageIO.read(imageFile);
-        }
-    }
 }

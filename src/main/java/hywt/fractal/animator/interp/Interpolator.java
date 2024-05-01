@@ -1,4 +1,4 @@
-package hywt.fractal.animator;
+package hywt.fractal.animator.interp;
 
 public interface Interpolator {
     /**
@@ -9,5 +9,4 @@ public interface Interpolator {
      */
     double get(double newX);
 
-    boolean isInRange(double zoom);
 }

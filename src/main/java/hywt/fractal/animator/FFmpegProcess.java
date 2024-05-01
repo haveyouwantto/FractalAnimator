@@ -24,8 +24,8 @@ public class FFmpegProcess {
                 "-f", "rawvideo",
                 "-s", String.format("%dx%d", width, height),
                 "-i", "-",
-                "-c:v", "h264_nvenc",
-                "-qp", "22",
+                "-c:v", "h264_qsv",
+                "-b:v", "20M",
                 "-y",
                 "output/output.mkv"
         );
