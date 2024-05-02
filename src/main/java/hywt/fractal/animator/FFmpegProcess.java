@@ -25,7 +25,7 @@ public class FFmpegProcess {
                 "-s", String.format("%dx%d", width, height),
                 "-i", "-",
                 "-c:v", "h264_qsv",
-                "-b:v", "20M",
+                "-b:v", "50M",
                 "-y",
                 "output/output.mkv"
         );

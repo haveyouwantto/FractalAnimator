@@ -83,10 +83,7 @@ public class VideoRenderer {
                 renderFrame(scales, process,
                         frame,
                         manager.get(i + 1),
-                        manager.get(i + 2),
-                        manager.get(i + 3),
-                        manager.get(i + 4),
-                        manager.get(i + 5)
+                        manager.get(i + 2)
                 );
             }
         }
@@ -95,6 +92,7 @@ public class VideoRenderer {
         renderFrame(endScales, process, manager.getLast());
 
         process.finish();
+        service.shutdown();
     }
 
 
@@ -115,7 +113,7 @@ public class VideoRenderer {
                 BufferedImage buffer = framePool.take();
                 Graphics2D g2d = buffer.createGraphics();
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                 int bgWidth = buffer.getWidth();
                 int bgHeight = buffer.getHeight();
 
