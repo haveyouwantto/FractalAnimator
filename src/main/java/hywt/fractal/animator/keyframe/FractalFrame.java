@@ -1,8 +1,9 @@
 package hywt.fractal.animator.keyframe;
 
 import java.awt.image.BufferedImage;
+import java.io.Closeable;
 
-public abstract class FractalFrame implements Comparable<FractalFrame> {
+public abstract class FractalFrame implements Comparable<FractalFrame>, Closeable {
     FractalScale scale;
 
     public FractalScale getScale() {

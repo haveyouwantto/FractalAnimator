@@ -35,7 +35,7 @@ public class VideoRenderer {
         indicators = new LinkedList<>();
 
         int processors = Runtime.getRuntime().availableProcessors();
-        service = Executors.newFixedThreadPool(processors);
+        service = Executors.newFixedThreadPool(2);
         framePool = new ArrayBlockingQueue<>(processors + 2);
         for (int i = 0; i < processors + 1; i++) {
             framePool.add(new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR));
@@ -57,24 +57,21 @@ public class VideoRenderer {
 
         double startTime = 2;
         double endTime = 2;
-        List<Double> initScales = Collections.nCopies((int) (fps * startTime), manager.getFirst().getScale().getZooms());
+        List<Double> initScales = Collections.nCopies((int) (fps * startTime), 0.0);
         renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
 
         frameNum = 0;
-        double currentZoom = manager.get(0).getScale().getZooms();
+        double currentZoom = 0;
         for (int i = 0; i < manager.size(); i++) {
             FractalFrame frame = manager.get(i);
             List<Double> scales = new ArrayList<>();
-            double zooms = frame.getScale().getZooms() + 1;
+            double zooms = i;
 
             while (currentZoom < zooms + 1) {
                 double t = frameNum * 1.0 / fps;
                 double v = interpolator.get(t);
                 currentZoom = v;
 //                System.out.printf("%.2f %.2f %.2f\n", t,v,zooms);
-                if (v > zooms) {
-                    break;
-                }
                 scales.add(v);
                 frameNum++;
             }
@@ -83,12 +80,14 @@ public class VideoRenderer {
                 renderFrame(scales, process,
                         frame,
                         manager.get(i + 1),
-                        manager.get(i + 2)
+                        manager.get(i + 2),
+                        manager.get(i + 3)
                 );
+                frame.close();
             }
         }
 
-        List<Double> endScales = Collections.nCopies((int) (fps * endTime), manager.getLast().getScale().getZooms());
+        List<Double> endScales = Collections.nCopies((int) (fps * endTime), (double) (manager.size() - 1));
         renderFrame(endScales, process, manager.getLast());
 
         process.finish();
@@ -124,7 +123,7 @@ public class VideoRenderer {
                 }
 
                 for (ScaleIndicator indicator : indicators) {
-                    indicator.draw(g2d, new FractalScale(factor), width, height);
+                    indicator.draw(g2d, new FractalScale(frames[0].getScale().getZooms() + (factor - baseFactor)), width, height);
                 }
 
                 return buffer;
@@ -141,7 +140,7 @@ public class VideoRenderer {
     }
 
     private void putImage(BufferedImage image, Graphics2D g2d, double factor, int bgWidth, int bgHeight) {
-        double scaleFactor = Math.pow(2, factor) * ((double) bgWidth / Math.max(image.getWidth(), image.getHeight()));
+        double scaleFactor = Math.pow(2, factor) * ((double) (bgWidth) / Math.max(image.getWidth(), image.getHeight()));
 //        System.out.println();
 
         int imgWidth = image.getWidth();

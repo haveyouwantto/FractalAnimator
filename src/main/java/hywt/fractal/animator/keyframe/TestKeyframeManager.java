@@ -1,6 +1,7 @@
 package hywt.fractal.animator.keyframe;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Iterator;
 
 public class TestKeyframeManager extends KeyframeManager {
@@ -71,6 +72,11 @@ public class TestKeyframeManager extends KeyframeManager {
                 re1 = temp;
             }
             return 1000;
+        }
+
+        @Override
+        public void close() throws IOException {
+            image = null;
         }
     }
 }

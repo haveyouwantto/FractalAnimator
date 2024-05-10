@@ -92,6 +92,7 @@ public class FrameBrowser extends JFrame {
         imgDisplay.updateUI();
 
         frameNum.setText(String.valueOf(ord));
+        frame.close();
     }
 
     static class ImagePanel extends JPanel {

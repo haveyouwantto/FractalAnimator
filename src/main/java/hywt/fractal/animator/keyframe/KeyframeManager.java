@@ -39,4 +39,12 @@ public abstract class KeyframeManager implements Iterable<FractalFrame> {
     public FractalFrame getLast() {
         return get(size() - 1);
     }
+
+    public FractalScale getFirstScale(){
+        return getFirst().getScale();
+    }
+
+    public FractalScale getLastScale(){
+        return getLast().getScale();
+    }
 }

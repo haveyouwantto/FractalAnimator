@@ -7,6 +7,7 @@ import java.io.IOException;
 
 public class FZFractalFrame extends FractalFrame {
     public File imageFile;
+    private BufferedImage image;
 
     FZFractalFrame(File file, FractalScale scale) {
         this.imageFile = file;
@@ -15,6 +16,12 @@ public class FZFractalFrame extends FractalFrame {
 
     @Override
     public BufferedImage getImage() throws IOException {
-        return ImageIO.read(imageFile);
+        if(image == null) image = ImageIO.read(imageFile);
+        return image;
+    }
+
+    @Override
+    public void close() {
+        image = null;
     }
 }
