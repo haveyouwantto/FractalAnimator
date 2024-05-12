@@ -5,6 +5,8 @@ import hywt.fractal.animator.keyframe.KeyframeManager;
 import hywt.fractal.animator.keyframe.FractalFrame;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -56,6 +58,20 @@ public class FrameBrowser extends JFrame {
         JButton nextBtn = new JButton(">");
         nextBtn.addActionListener(e -> zoomIn());
         controls.add(nextBtn);
+
+        JSpinner spinner = new JSpinner();
+        spinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                try {
+                    ord = (Integer) spinner.getValue();
+                    showFrame(ord);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        controls.add(spinner);
 
         getContentPane().add(controls, BorderLayout.SOUTH);
 

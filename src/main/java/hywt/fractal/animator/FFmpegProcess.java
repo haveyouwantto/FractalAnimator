@@ -25,8 +25,8 @@ public class FFmpegProcess {
                 "-s", String.format("%dx%d", width, height),
                 "-i", "-",
                 "-c:v", "libx264",
-                "-crf", "20",
-                "-preset", "fast",
+                "-crf", "23",
+                "-preset", "medium",
                 "-y",
                 "output/output.mkv"
         );

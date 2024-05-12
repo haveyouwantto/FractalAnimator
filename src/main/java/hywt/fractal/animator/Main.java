@@ -12,7 +12,7 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        KeyframeManager manager = new FZKeyframeManager(new File("E:/fractal/luxury"));
+        KeyframeManager manager = new FZKeyframeManager(new File("E:/fractal/high order"));
 
         VideoRenderer renderer = new VideoRenderer(3840, 2160, 120);
 
@@ -20,10 +20,9 @@ public class Main {
         double[] y = {0, 30, 41, manager.size()};
 
         double[][] speedDef = {
-                {0, 0, 10, 20},
-                {250, 528, 10, 20},
-                //{80, 809, 10, 40},
-                {9 * 60 + 27, manager.size() - 1, 30, 30}
+                {0, 0, 5, 5},
+                {2*60+2, 290, 30, 30},
+                {2*60+2+(4*60+25), manager.size() - 1, 30, 30}
         };
 
         Interpolator interpolator = new AccelInterpolator(speedDef);

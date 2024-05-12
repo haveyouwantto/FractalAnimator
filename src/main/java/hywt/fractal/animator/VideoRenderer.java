@@ -35,9 +35,9 @@ public class VideoRenderer {
         indicators = new LinkedList<>();
 
         int processors = Runtime.getRuntime().availableProcessors();
-        service = Executors.newFixedThreadPool(2);
-        framePool = new ArrayBlockingQueue<>(processors + 2);
-        for (int i = 0; i < processors + 1; i++) {
+        service = Executors.newFixedThreadPool(processors);
+        framePool = new ArrayBlockingQueue<>(processors * 2);
+        for (int i = 0; i < processors * 2; i++) {
             framePool.add(new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR));
         }
     }
@@ -65,9 +65,8 @@ public class VideoRenderer {
         for (int i = 0; i < manager.size(); i++) {
             FractalFrame frame = manager.get(i);
             List<Double> scales = new ArrayList<>();
-            double zooms = i;
 
-            while (currentZoom < zooms + 1) {
+            while (currentZoom < i + 1) {
                 double t = frameNum * 1.0 / fps;
                 double v = interpolator.get(t);
                 currentZoom = v;
@@ -107,6 +106,8 @@ public class VideoRenderer {
                 images[i] = frames[i].getImage();
         }
 
+        double scaleFix = Math.log(width * 1.0 / height) / Math.log(2) - Math.log(images[0].getWidth() * 1.0 / images[0].getHeight()) / Math.log(2);
+
         for (double factor : factors) {
             Callable<BufferedImage> c = () -> {
                 BufferedImage buffer = framePool.take();
@@ -116,14 +117,13 @@ public class VideoRenderer {
                 int bgWidth = buffer.getWidth();
                 int bgHeight = buffer.getHeight();
 
-
                 for (int i = 0; i < images.length; i++) {
                     if (frames[i] != null)
                         putImage(images[i], g2d, (factor - baseFactor) - i, bgWidth, bgHeight);
                 }
 
                 for (ScaleIndicator indicator : indicators) {
-                    indicator.draw(g2d, new FractalScale(frames[0].getScale().getZooms() + (factor - baseFactor)), width, height);
+                    indicator.draw(g2d, new FractalScale(frames[0].getScale().getZooms() + (factor - baseFactor) + scaleFix), width, height);
                 }
 
                 return buffer;
