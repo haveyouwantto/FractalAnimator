@@ -43,7 +43,7 @@ public class GUI extends JFrame {
         JLabel frameNum = new JLabel("-");
         inputPanel.add(frameNum, BorderLayout.SOUTH);
 
-        JComboBox<Class<? extends OptionConfigure<KeyframeManager>>> importerSelect = new JComboBox<>();
+        JComboBox<Class<? extends ManagerConfigure>> importerSelect = new JComboBox<>();
 
         importerSelect.addItem(FZSequenceConfigure.class);
         importerSelect.addItem(TestSequenceConfigure.class);
@@ -51,16 +51,17 @@ public class GUI extends JFrame {
             try {
                 Component component = ((BorderLayout) inputPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
                 if (component != null) {
-                    inputPanel.getLayout().removeLayoutComponent(component);
+                    inputPanel.remove(component);
                 }
                 managerConfigure = ((Class<? extends ManagerConfigure>) Objects.requireNonNull(importerSelect.getSelectedItem())).getDeclaredConstructor().newInstance();
                 managerConfigure.setOnLoadCallable(() -> {
                     frameNum.setText("Found " + managerConfigure.get().size() + " frames");
                     return null;
                 });
-                inputPanel.add(managerConfigure, BorderLayout.CENTER);
                 frameNum.setText("-");
                 managerConfigure.init();
+
+                inputPanel.add(managerConfigure, BorderLayout.CENTER);
                 inputPanel.revalidate();
                 inputPanel.repaint();
             } catch (InstantiationException | InvocationTargetException | NoSuchMethodException |
@@ -74,8 +75,34 @@ public class GUI extends JFrame {
 
 
         JPanel interpPanel = new JPanel();
+        interpPanel.setLayout(new BorderLayout());
+
+        JComboBox<Class<? extends InterpolatorConfigure>> interpSelect = new JComboBox<>();
+
+        interpSelect.addItem(LinearInterpolatorConfigure.class);
+        interpSelect.addActionListener(e -> {
+            try {
+                Component component = ((BorderLayout) interpPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+                if (component != null) {
+                    interpPanel.remove(component);
+                }
+                interpConfigure = ((Class<? extends InterpolatorConfigure>) Objects.requireNonNull(interpSelect.getSelectedItem())).getDeclaredConstructor().newInstance();
+                interpConfigure.init();
+
+                interpPanel.add(interpConfigure, BorderLayout.CENTER);
+                interpPanel.revalidate();
+                interpPanel.repaint();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException ex) {
+                throw new RuntimeException(ex);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
         interpPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Speed Interpolator",
                 TitledBorder.CENTER, TitledBorder.TOP, null, null));
+        interpPanel.add(interpSelect,BorderLayout.NORTH);
         controls.add(interpPanel);
 
         JPanel indiPanel = new JPanel();

@@ -60,6 +60,7 @@ public class FrameBrowser extends JFrame {
         controls.add(nextBtn);
 
         JSpinner spinner = new JSpinner();
+        spinner.setPreferredSize(new Dimension(70, 20));
         spinner.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -104,7 +105,7 @@ public class FrameBrowser extends JFrame {
         FractalFrame frame = manager.get(index);
         FractalScale scale = frame.getScale();
         infoLabel.setText(String.format("%.2f zooms | Magn: %s",scale.getZooms(), scale.getMagnification()));
-        imgDisplay.setImg((BufferedImage) frame.getImage());
+        imgDisplay.setImg(frame.getImage());
         imgDisplay.updateUI();
 
         frameNum.setText(String.valueOf(ord));

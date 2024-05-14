@@ -11,8 +11,6 @@ public abstract class ManagerConfigure extends OptionConfigure<KeyframeManager> 
         this.callable = callable;
     }
 
-    public abstract void init() throws Exception;
-
     protected void load() throws Exception {
         if (callable != null) callable.call();
     }
