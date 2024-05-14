@@ -66,7 +66,7 @@ public class VideoRenderer {
             FractalFrame frame = manager.get(i);
             List<Double> scales = new ArrayList<>();
 
-            while (currentZoom < i + 1) {
+            while (currentZoom <= i + 1) {
                 double t = frameNum * 1.0 / fps;
                 double v = interpolator.get(t);
                 currentZoom = v;

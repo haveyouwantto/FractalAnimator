@@ -1,21 +1,21 @@
 package hywt.fractal.animator.ui;
 
+import hywt.fractal.animator.FXScaleIndicator;
+import hywt.fractal.animator.KFScaleIndicator;
+import hywt.fractal.animator.ScaleIndicator;
+import hywt.fractal.animator.VideoRenderer;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 
 public class GUI extends JFrame {
 
+    private final IndicatorSelectorPanel indiPanel;
     private ManagerConfigure managerConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
 
@@ -105,10 +105,16 @@ public class GUI extends JFrame {
         interpPanel.add(interpSelect,BorderLayout.NORTH);
         controls.add(interpPanel);
 
-        JPanel indiPanel = new JPanel();
+        Class<? extends ScaleIndicator>[] indicatorClasses = new Class[]{
+                KFScaleIndicator.class, FXScaleIndicator.class
+        };
+
+        indiPanel = new IndicatorSelectorPanel(indicatorClasses);
         indiPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Zoom Indicator",
                 TitledBorder.CENTER, TitledBorder.TOP, null, null));
+        indiPanel.setLayout(new BoxLayout(indiPanel, BoxLayout.Y_AXIS));
         controls.add(indiPanel);
+
 
         JButton browseBtn = new JButton("Browse");
         browseBtn.addActionListener(e -> {
@@ -123,8 +129,30 @@ public class GUI extends JFrame {
         genOptionPanel.add(browseBtn);
 
         JButton genBtn = new JButton("Generate");
+        genBtn.addActionListener(e->{
+            try {
+                generate();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         genOptionPanel.add(genBtn);
 
         pack();
+    }
+
+    public void generate() throws Exception {
+        VideoRenderer renderer = new VideoRenderer(1920, 1080, 30);
+
+        KeyframeManager manager = managerConfigure.get();
+        Interpolator interpolator = interpConfigure.get();
+
+        renderer.setInterpolator(interpolator);
+
+        for (Class<? extends ScaleIndicator> indicator: indiPanel.getSelected()){
+            renderer.addScaleIndicator(indicator.getDeclaredConstructor().newInstance());
+        }
+
+        renderer.ffmpegRender(manager);
     }
 }
