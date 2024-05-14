@@ -120,7 +120,6 @@ public class GUI extends JFrame {
         browseBtn.addActionListener(e -> {
             try {
                 FrameBrowser fb = new FrameBrowser(managerConfigure.get());
-//                fb.set
                 fb.setVisible(true);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);

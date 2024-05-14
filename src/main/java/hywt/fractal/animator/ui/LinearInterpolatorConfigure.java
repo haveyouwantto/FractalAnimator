@@ -43,8 +43,8 @@ public class LinearInterpolatorConfigure extends InterpolatorConfigure {
         JLabel yl = new JLabel("zoom: ");
         JTextField xSpinner = new JTextField();
         JTextField ySpinner = new JTextField();
-        xSpinner.setPreferredSize(new Dimension(60, 20));
-        ySpinner.setPreferredSize(new Dimension(60, 20));
+        xSpinner.setPreferredSize(new Dimension(60, 30));
+        ySpinner.setPreferredSize(new Dimension(60, 30));
         inputPanel.add(xl);
         inputPanel.add(xSpinner);
         inputPanel.add(yl);

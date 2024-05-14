@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.formdev:flatlaf:3.4.1")
 }
 
 tasks.test {
