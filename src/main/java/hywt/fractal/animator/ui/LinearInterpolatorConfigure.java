@@ -51,8 +51,10 @@ public class LinearInterpolatorConfigure extends InterpolatorConfigure {
         inputPanel.add(ySpinner);
 
         pointList = new ArrayList<>();
+        pointList.add(new LinearPoint(0,0));
         pointJList = new JList<>();
         add(pointJList, BorderLayout.CENTER);
+        updateList();
 
         JPanel btnPanel = new JPanel();
         editPanel.add(btnPanel);

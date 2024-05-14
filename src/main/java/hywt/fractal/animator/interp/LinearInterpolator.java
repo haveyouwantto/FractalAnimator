@@ -20,8 +20,8 @@ public class LinearInterpolator implements Interpolator {
             double slope = (y2 - y1) / (x2 - x1);
             double yIntercept = y1 - slope * x1;
             return slope * newX + yIntercept;
-        }catch (ArrayIndexOutOfBoundsException e){
-            return yValues[yValues.length - 1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return yValues[yValues.length - 1] + newX;
         }
     }
 

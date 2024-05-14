@@ -1,9 +1,6 @@
 package hywt.fractal.animator.ui;
 
-import hywt.fractal.animator.FXScaleIndicator;
-import hywt.fractal.animator.KFScaleIndicator;
-import hywt.fractal.animator.ScaleIndicator;
-import hywt.fractal.animator.VideoRenderer;
+import hywt.fractal.animator.*;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
@@ -106,7 +103,7 @@ public class GUI extends JFrame {
         controls.add(interpPanel);
 
         Class<? extends ScaleIndicator>[] indicatorClasses = new Class[]{
-                KFScaleIndicator.class, FXScaleIndicator.class
+                KFScaleIndicator.class, FXScaleIndicator.class, OdometerIndicator.class
         };
 
         indiPanel = new IndicatorSelectorPanel(indicatorClasses);
