@@ -86,6 +86,8 @@ public class GUI extends JFrame {
         JComboBox<Class<? extends InterpolatorConfigure>> interpSelect = new JComboBox<>();
 
         interpSelect.addItem(LinearInterpolatorConfigure.class);
+        interpSelect.addItem(AccelInterpolatorConfigure.class);
+
         interpSelect.addActionListener(e -> {
             try {
                 Component component = ((BorderLayout) interpPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
