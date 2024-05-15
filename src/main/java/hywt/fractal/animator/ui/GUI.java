@@ -137,7 +137,11 @@ public class GUI extends JFrame {
         genBtn = new JButton("Generate");
         genBtn.addActionListener(e -> {
             try {
-                generate();
+                if(managerConfigure.get()!=null){
+                    generate();
+                }else{
+                    JOptionPane.showMessageDialog(this, "Missing image sequence", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
