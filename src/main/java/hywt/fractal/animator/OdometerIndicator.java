@@ -20,7 +20,7 @@ public class OdometerIndicator implements ScaleIndicator {
         image = new BufferedImage(SCALE / 2 * DIGITS + MARGIN * (DIGITS + 1), SCALE, BufferedImage.TYPE_3BYTE_BGR);
         g = image.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Font font = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Inconsolata.ttf")).deriveFont((float) SCALE);
+        Font font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()).deriveFont((float) SCALE);
         g.setFont(font);
 
         bgColor = new Color(20, 20, 20);

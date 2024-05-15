@@ -2,11 +2,14 @@ package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.*;
 import hywt.fractal.animator.interp.Interpolator;
+import hywt.fractal.animator.keyframe.FZKeyframeManager;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
@@ -23,6 +26,8 @@ public class GUI extends JFrame {
         setTitle("Fractal Animator");
         setPreferredSize(new Dimension(854, 480));
         setLocation(100, 100);
+        setIconImage(Toolkit.getDefaultToolkit()
+                .getImage(ClassLoader.getSystemResource("assets/mandelbrot1.png")));
         getContentPane().setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -102,7 +107,7 @@ public class GUI extends JFrame {
 
         interpPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Speed Interpolator",
                 TitledBorder.CENTER, TitledBorder.TOP, null, null));
-        interpPanel.add(interpSelect,BorderLayout.NORTH);
+        interpPanel.add(interpSelect, BorderLayout.NORTH);
         controls.add(interpPanel);
 
         Class<? extends ScaleIndicator>[] indicatorClasses = new Class[]{
@@ -129,7 +134,7 @@ public class GUI extends JFrame {
         genOptionPanel.add(browseBtn);
 
         genBtn = new JButton("Generate");
-        genBtn.addActionListener(e->{
+        genBtn.addActionListener(e -> {
             try {
                 generate();
             } catch (Exception ex) {
@@ -141,7 +146,7 @@ public class GUI extends JFrame {
         pack();
     }
 
-    public void setGenerateEnabled(boolean b){
+    public void setGenerateEnabled(boolean b) {
         browseBtn.setEnabled(b);
         genBtn.setEnabled(b);
     }
@@ -154,25 +159,45 @@ public class GUI extends JFrame {
 
         renderer.setInterpolator(interpolator);
 
-        for (Class<? extends ScaleIndicator> indicator: indiPanel.getSelected()){
+        for (Class<? extends ScaleIndicator> indicator : indiPanel.getSelected()) {
             renderer.addScaleIndicator(indicator.getDeclaredConstructor().newInstance());
         }
 
-        ProgressDialog dialog = new ProgressDialog(renderer);
-        dialog.setLocationRelativeTo(genBtn);
-        dialog.start();
 
-        setGenerateEnabled(false);
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        chooser.setCurrentDirectory(new File("."));
 
-        new Thread(()->{
-            try {
-                renderer.ffmpegRender(manager);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, e.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } finally {
-                setGenerateEnabled(true);
+        int result = chooser.showSaveDialog(genBtn);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = chooser.getSelectedFile();
+
+            if (!selectedFile.getName().endsWith(".mkv")) {
+                selectedFile = new File(selectedFile.getAbsolutePath() + ".mkv");
             }
-        }).start();
+
+            ProgressDialog dialog = new ProgressDialog(renderer);
+            dialog.setLocationRelativeTo(genBtn);
+            dialog.start();
+
+            setGenerateEnabled(false);
+            try {
+                File finalSelectedFile = selectedFile;
+                new Thread(() -> {
+                    try {
+                        renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath());
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(this, e.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        setGenerateEnabled(true);
+                    }
+                }).start();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
 
     }
 }

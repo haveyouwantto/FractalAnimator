@@ -55,9 +55,9 @@ public class VideoRenderer {
         this.interpolator = interpolator;
     }
 
-    public void ffmpegRender(KeyframeManager manager) throws Exception {
+    public void ffmpegRender(KeyframeManager manager, String path) throws Exception {
         if (interpolator == null) throw new IllegalStateException("Interpolator not set.");
-        FFmpegProcess process = new FFmpegProcess(width, height, fps, "", "");
+        FFmpegProcess process = new FFmpegProcess(width, height, fps, path, "");
         process.start();
 
         startTime = 2;

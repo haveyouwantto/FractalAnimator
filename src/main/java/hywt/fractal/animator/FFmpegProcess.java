@@ -28,7 +28,7 @@ public class FFmpegProcess {
                 "-crf", "23",
                 "-preset", "medium",
                 "-y",
-                "output/output.mkv"
+                path
         );
         builder.redirectErrorStream(true);
     }

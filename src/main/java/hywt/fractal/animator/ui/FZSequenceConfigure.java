@@ -24,7 +24,7 @@ public class FZSequenceConfigure extends ManagerConfigure{
             fileChooser.setCurrentDirectory(new File("."));
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fileChooser.setToolTipText("Fractal Zoomer sequence");
-            int result = fileChooser.showOpenDialog(null);
+            int result = fileChooser.showOpenDialog(fileButton);
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
