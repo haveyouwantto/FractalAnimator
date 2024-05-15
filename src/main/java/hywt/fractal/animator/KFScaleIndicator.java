@@ -12,7 +12,7 @@ public class KFScaleIndicator implements ScaleIndicator {
 
     public KFScaleIndicator() throws IOException, FontFormatException {
         font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream());
-        scale = 2;
+        scale = 1;
     }
 
     @Override
