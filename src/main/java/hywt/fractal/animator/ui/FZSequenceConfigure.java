@@ -15,7 +15,7 @@ public class FZSequenceConfigure extends ManagerConfigure{
     public void init() {
         setLayout(new BorderLayout());
 
-        JLabel label = new JLabel("Input dir:");
+        JLabel label = new JLabel("Select a directory:");
         add(label, BorderLayout.NORTH);
 
 
