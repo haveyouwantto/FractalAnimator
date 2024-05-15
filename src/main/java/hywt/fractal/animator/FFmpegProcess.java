@@ -25,7 +25,7 @@ public class FFmpegProcess {
                 "-s", String.format("%dx%d", width, height),
                 "-i", "-",
                 "-c:v", "libx264",
-                "-crf", "23",
+                "-crf", "21",
                 "-preset", "medium",
                 "-y",
                 path

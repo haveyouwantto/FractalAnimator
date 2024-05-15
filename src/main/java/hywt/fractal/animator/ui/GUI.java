@@ -159,7 +159,7 @@ public class GUI extends JFrame {
     }
 
     public void generate() throws Exception {
-        VideoRenderer renderer = new VideoRenderer(1920, 1080, 30);
+        VideoRenderer renderer = new VideoRenderer(1920, 1080, 60);
 
         KeyframeManager manager = managerConfigure.get();
         Interpolator interpolator = interpConfigure.get();
