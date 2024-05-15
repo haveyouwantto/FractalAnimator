@@ -7,6 +7,7 @@ import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -168,6 +169,8 @@ public class GUI extends JFrame {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setDialogType(JFileChooser.SAVE_DIALOG);
         chooser.setCurrentDirectory(new File("."));
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("MKV files","mkv"));
 
         int result = chooser.showSaveDialog(genBtn);
 

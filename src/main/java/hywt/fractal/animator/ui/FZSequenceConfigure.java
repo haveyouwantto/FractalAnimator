@@ -4,6 +4,7 @@ import hywt.fractal.animator.keyframe.FZKeyframeManager;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,6 +25,8 @@ public class FZSequenceConfigure extends ManagerConfigure{
             fileChooser.setCurrentDirectory(new File("."));
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fileChooser.setToolTipText("Fractal Zoomer sequence");
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Fractal Zoomer output directory", "ds"));
             int result = fileChooser.showOpenDialog(fileButton);
 
             if (result == JFileChooser.APPROVE_OPTION) {
