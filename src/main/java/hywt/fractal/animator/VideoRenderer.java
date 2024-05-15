@@ -19,13 +19,16 @@ public class VideoRenderer {
     private final int height;
     private final double fps;
     private Interpolator interpolator;
-    private List<ScaleIndicator> indicators;
+    private final List<ScaleIndicator> indicators;
 
     // Multithreading
     private final ExecutorService service;
     private final BlockingQueue<BufferedImage> framePool;
 
-    private int frameNum;
+    private int renderedFrames;
+    private boolean finished;
+    private double startTime;
+    private double endTime;
 
     public VideoRenderer(int width, int height, double fps) {
         this.width = width;
@@ -40,6 +43,8 @@ public class VideoRenderer {
         for (int i = 0; i < processors * 2; i++) {
             framePool.add(new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR));
         }
+
+        renderedFrames = 0;
     }
 
     public Interpolator getInterpolator() {
@@ -55,12 +60,12 @@ public class VideoRenderer {
         FFmpegProcess process = new FFmpegProcess(width, height, fps, "", "");
         process.start();
 
-        double startTime = 2;
-        double endTime = 2;
+        startTime = 2;
+        endTime = 2;
         List<Double> initScales = Collections.nCopies((int) (fps * startTime), 0.0);
         renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
 
-        frameNum = 0;
+        int frameNum = 0;
         double currentZoom = 0;
         for (int i = 0; i < manager.size(); i++) {
             FractalFrame frame = manager.get(i);
@@ -70,7 +75,7 @@ public class VideoRenderer {
                 double t = frameNum * 1.0 / fps;
                 double v = interpolator.get(t);
                 currentZoom = v;
-                if(currentZoom > i + 1) break;
+                if (currentZoom > i + 1) break;
 //                System.out.printf("%.2f %.2f %.2f\n", t,v,zooms);
                 scales.add(v);
                 frameNum++;
@@ -92,6 +97,7 @@ public class VideoRenderer {
 
         process.finish();
         service.shutdown();
+        finished = true;
     }
 
 
@@ -136,6 +142,9 @@ public class VideoRenderer {
         for (Future<BufferedImage> future : futures) {
             BufferedImage image = future.get();
             process.writeFrame(image);
+            synchronized (this) {
+                renderedFrames++;
+            }
             framePool.add(image);
         }
     }
@@ -159,5 +168,17 @@ public class VideoRenderer {
 
     public void removeScaleIndicator(ScaleIndicator sc) {
         indicators.remove(sc);
+    }
+
+    public synchronized int getRenderedFrames() {
+        return renderedFrames;
+    }
+
+    public synchronized int getTotalFrames(){
+        return (int) ((startTime+endTime+ interpolator.getDuration())*fps);
+    }
+
+    public synchronized boolean isFinished() {
+        return finished;
     }
 }

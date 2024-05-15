@@ -26,7 +26,7 @@ public class FrameBrowser extends JFrame {
         setTitle("Keyframe Browser");
         setPreferredSize(new Dimension(854, 480));
         setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         addMouseWheelListener(new MouseWheelListener() {
             @Override
@@ -67,8 +67,10 @@ public class FrameBrowser extends JFrame {
                 try {
                     ord = (Integer) spinner.getValue();
                     showFrame(ord);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                } catch (NullPointerException ex) {
+                    JOptionPane.showMessageDialog(spinner, "Frame don't exist", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception ex){
+                    ex.printStackTrace();
                 }
             }
         });

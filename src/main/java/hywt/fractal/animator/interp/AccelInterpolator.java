@@ -31,6 +31,11 @@ public class AccelInterpolator implements Interpolator {
         else return b.getValue().zooms + newX;
     }
 
+    @Override
+    public double getDuration() {
+        return points.lastKey();
+    }
+
     private double interpolate(double a, double b, double x, double t1, double t2) {
 
         if (t1 + t2 > 1) {

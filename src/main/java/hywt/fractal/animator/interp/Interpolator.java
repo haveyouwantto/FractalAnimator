@@ -9,4 +9,5 @@ public interface Interpolator {
      */
     double get(double newX);
 
+    double getDuration();
 }

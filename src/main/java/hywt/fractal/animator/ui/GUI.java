@@ -13,6 +13,8 @@ import java.util.Objects;
 public class GUI extends JFrame {
 
     private final IndicatorSelectorPanel indiPanel;
+    private final JButton browseBtn;
+    private final JButton genBtn;
     private ManagerConfigure managerConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
 
@@ -20,6 +22,7 @@ public class GUI extends JFrame {
 
         setTitle("Fractal Animator");
         setPreferredSize(new Dimension(854, 480));
+        setLocation(100, 100);
         getContentPane().setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -113,10 +116,11 @@ public class GUI extends JFrame {
         controls.add(indiPanel);
 
 
-        JButton browseBtn = new JButton("Browse");
+        browseBtn = new JButton("Browse");
         browseBtn.addActionListener(e -> {
             try {
                 FrameBrowser fb = new FrameBrowser(managerConfigure.get());
+                fb.setLocationRelativeTo(browseBtn);
                 fb.setVisible(true);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -124,7 +128,7 @@ public class GUI extends JFrame {
         });
         genOptionPanel.add(browseBtn);
 
-        JButton genBtn = new JButton("Generate");
+        genBtn = new JButton("Generate");
         genBtn.addActionListener(e->{
             try {
                 generate();
@@ -135,6 +139,11 @@ public class GUI extends JFrame {
         genOptionPanel.add(genBtn);
 
         pack();
+    }
+
+    public void setGenerateEnabled(boolean b){
+        browseBtn.setEnabled(b);
+        genBtn.setEnabled(b);
     }
 
     public void generate() throws Exception {
@@ -149,6 +158,21 @@ public class GUI extends JFrame {
             renderer.addScaleIndicator(indicator.getDeclaredConstructor().newInstance());
         }
 
-        renderer.ffmpegRender(manager);
+        ProgressDialog dialog = new ProgressDialog(renderer);
+        dialog.setLocationRelativeTo(genBtn);
+        dialog.start();
+
+        setGenerateEnabled(false);
+
+        new Thread(()->{
+            try {
+                renderer.ffmpegRender(manager);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                setGenerateEnabled(true);
+            }
+        }).start();
+
     }
 }

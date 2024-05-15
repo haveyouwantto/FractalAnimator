@@ -25,6 +25,11 @@ public class LinearInterpolator implements Interpolator {
         }
     }
 
+    @Override
+    public double getDuration() {
+        return xValues[xValues.length - 1];
+    }
+
     private int findIndex(double newX) {
         int i = 0;
         while (i < xValues.length - 1 && newX > xValues[i + 1]) {
