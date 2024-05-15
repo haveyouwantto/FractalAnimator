@@ -28,7 +28,7 @@ public class KeyPoint implements Comparable<KeyPoint> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("["+data.get("time")+"] ");
+        StringBuilder builder = new StringBuilder("[" + data.get("time") + "] ");
         data.forEach((k, v) -> builder.append(k).append(": ").append(v).append(" | "));
         return builder.toString();
     }

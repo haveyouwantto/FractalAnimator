@@ -31,8 +31,8 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
         editPanel.add(inputPanel);
 
-        addField("time", 0);
-        addField("zoom", 0);
+        addField("time", "Time",0);
+        addField("zoom", "Zoom",0);
 
         pointList = new ArrayList<>();
 
@@ -96,8 +96,8 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
         pointJList.setModel(lm);
     }
 
-    protected void addField(String key, double defaultValue) {
-        LabeledField field = new LabeledField(key);
+    protected void addField(String key, String displayName, double defaultValue) {
+        LabeledField field = new LabeledField(displayName);
         field.field.setText(String.valueOf(defaultValue));
         extraFields.put(key, field);
         inputPanel.add(field);
@@ -120,11 +120,12 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
         private JTextField field;
 
         public LabeledField(String key) {
+            setLayout(new BorderLayout());
             label = new JLabel(key + ": ");
             field = new JTextField();
             field.setPreferredSize(new Dimension(60, 30));
-            add(label);
-            add(field);
+            add(label,BorderLayout.WEST);
+            add(field,BorderLayout.CENTER);
         }
     }
 }
