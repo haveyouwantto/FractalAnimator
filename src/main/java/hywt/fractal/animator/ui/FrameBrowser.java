@@ -60,7 +60,7 @@ public class FrameBrowser extends JFrame {
         controls.add(nextBtn);
 
         JSpinner spinner = new JSpinner();
-        spinner.setPreferredSize(new Dimension(70, 30));
+        spinner.setPreferredSize(new Dimension(100, 30));
         spinner.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

@@ -16,8 +16,14 @@ public class FZSequenceConfigure extends ManagerConfigure{
         setLayout(new BorderLayout());
 
         JLabel label = new JLabel("Select a directory:");
-        add(label, BorderLayout.NORTH);
 
+
+        JTextArea prompt = new JTextArea();
+        prompt.setLineWrap(true);
+        prompt.setWrapStyleWord(true);
+        prompt.setText("Fractal Zoomer image sequence importer");
+        prompt.setEnabled(false);
+        add(prompt,BorderLayout.NORTH);
 
         JButton fileButton = new JButton("Select");
         fileButton.addActionListener(e -> {
@@ -42,7 +48,9 @@ public class FZSequenceConfigure extends ManagerConfigure{
                 }
             }
         });
+
         JPanel panel = new JPanel();
+        panel.add(label);
         panel.add(fileButton);
 
         add(panel, BorderLayout.CENTER);

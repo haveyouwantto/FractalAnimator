@@ -23,12 +23,12 @@ public class TestSequenceConfigure extends ManagerConfigure{
 
         setLayout(new BorderLayout());
 
-        JTextArea field = new JTextArea();
-        field.setLineWrap(true);
-        field.setWrapStyleWord(true);
-        field.setText("Simple Mandelbrot generator for quick testing purpose.");
-        field.setEnabled(false);
+        JTextArea prompt = new JTextArea();
+        prompt.setLineWrap(true);
+        prompt.setWrapStyleWord(true);
+        prompt.setText("Simple Mandelbrot generator for quick testing purpose.");
+        prompt.setEnabled(false);
 
-        add(field, BorderLayout.CENTER);
+        add(prompt, BorderLayout.CENTER);
     }
 }
