@@ -1,6 +1,7 @@
 package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.ScaleIndicator;
+import hywt.fractal.animator.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,7 @@ public class IndicatorSelectorPanel extends JPanel {
             JCheckBox checkBox = new JCheckBox();
             indItem.add(checkBox, BorderLayout.WEST);
 
-            JLabel label = new JLabel(indicatorClass.getSimpleName());
+            JLabel label = new JLabel(Utils.convertToUpperWords(indicatorClass.getSimpleName()));
             indItem.add(label);
 
             if (!set) {

@@ -17,4 +17,21 @@ public class Utils {
 
         return baseName.substring(0, lastDotIndex);
     }
+
+    public static String convertToUpperWords(String input) {
+        StringBuilder output = new StringBuilder();
+
+        for (int i = 0; i < input.length(); i++) {
+            char currentChar = input.charAt(i);
+
+            // Add space before uppercase letters followed by lowercase letters
+            if (i > 0 && Character.isUpperCase(currentChar) && Character.isLowerCase(input.charAt(i + 1))) {
+                output.append(" ");
+            }
+
+            output.append(currentChar);
+        }
+
+        return output.toString();
+    }
 }
