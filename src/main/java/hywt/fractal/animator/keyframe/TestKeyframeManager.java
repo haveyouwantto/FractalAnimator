@@ -122,6 +122,14 @@ public class TestKeyframeManager extends KeyframeManager {
                 }));
             }
 
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
             for (int y = 0; y < height; y += 2) {
                 int finalY = y;
                 futures.add(service.submit(() -> {
@@ -144,6 +152,14 @@ public class TestKeyframeManager extends KeyframeManager {
                     }
                 }));
             }
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
             for (int y = 1; y < height; y += 2) {
                 int finalY = y;
                 futures.add(service.submit(() -> {
