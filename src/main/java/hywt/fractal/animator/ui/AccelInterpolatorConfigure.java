@@ -3,10 +3,12 @@ package hywt.fractal.animator.ui;
 import hywt.fractal.animator.interp.AccelInterpolator;
 import hywt.fractal.animator.interp.KeyPoint;
 
+import java.util.Arrays;
+
 public class AccelInterpolatorConfigure extends InterpolatorConfigure<AccelInterpolator> {
     @Override
     public AccelInterpolator get() {
-        double[][] speedDef = new double[3][4];
+        double[][] speedDef = new double[pointList.size()][4];
         for (int i = 0; i < pointList.size(); i++) {
             KeyPoint point = pointList.get(i);
             speedDef[i][0] = point.getX();
@@ -14,6 +16,7 @@ public class AccelInterpolatorConfigure extends InterpolatorConfigure<AccelInter
             speedDef[i][2] = point.getData("accT");
             speedDef[i][3] = point.getData("decT");
         }
+        System.out.println(Arrays.toString(speedDef));
 
         return new AccelInterpolator(speedDef);
     }

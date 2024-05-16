@@ -5,14 +5,22 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class TestKeyframeManager extends KeyframeManager {
     private final List<TestFractalFrame> frames;
 
+    private final ExecutorService service;
+
     public TestKeyframeManager(BigDecimal re, BigDecimal im, double magn, int iterations) {
         frames = new ArrayList<>();
+        int processors = Runtime.getRuntime().availableProcessors();
+        service = Executors.newFixedThreadPool(processors);
         for (int i = -1; Math.pow(2, i) <= magn; i++) {
-            frames.add(new TestFractalFrame(re, im, Math.pow(2, i), iterations));
+            frames.add(new TestFractalFrame(re, im, Math.pow(2, i), iterations, service));
         }
     }
 
@@ -54,7 +62,9 @@ public class TestKeyframeManager extends KeyframeManager {
         private int rebaseY;
         private int refs;
 
-        public TestFractalFrame(BigDecimal re, BigDecimal im, double magn, int iterations) {
+        private ExecutorService service;
+
+        public TestFractalFrame(BigDecimal re, BigDecimal im, double magn, int iterations, ExecutorService service) {
             this.scale = new FractalScale(Math.log(magn) / Math.log(2));
             this.size = 4 / magn;
             width = 1000;
@@ -64,6 +74,7 @@ public class TestKeyframeManager extends KeyframeManager {
             this.im = im;
             this.iterations = iterations;
             map = new int[height][width];
+            this.service = service;
         }
 
         @Override
@@ -92,55 +103,75 @@ public class TestKeyframeManager extends KeyframeManager {
             }
             refs++;
 
-            List<Integer[]> glitches = new ArrayList<>();
+            List<Integer[]> glitches = Collections.synchronizedList(new ArrayList<>());
+
+            List<Future<?>> futures = new ArrayList<>();
 
             for (int y = 0; y < height; y += 2) {
-                for (int x = 0; x < width; x += 2) {
-                    if (!rebase || map[y][x] < 0) {
-                        double[] pos = rebase ? getDelta(x, y, rebaseX, rebaseY) : getDelta(x, y, baseX, baseY);
-                        int iter = getIter(pos[0], pos[1], ref);
+                int finalY = y;
+                futures.add(service.submit(() -> {
+                    for (int x = 0; x < width; x += 2) {
+                        if (!rebase || map[finalY][x] < 0) {
+                            double[] pos = rebase ? getDelta(x, finalY, rebaseX, rebaseY) : getDelta(x, finalY, baseX, baseY);
+                            int iter = getIter(pos[0], pos[1], ref);
 
-                        if (iter < 0) glitches.add(new Integer[]{x, y});
-                        map[y][x] = iter;
-                    }
-                }
-            }
-            for (int y = 0; y < height; y += 2) {
-                for (int x = 1; x < width; x += 2) {
-                    if (!rebase || map[y][x] < 0) {
-                        if (y < height - 1 && x < width - 1) {
-                            int left = map[y][x - 1];
-                            int right = map[y][x + 1];
-                            if (left == right) {
-                                map[y][x] = left;
-                                continue;
-                            }
+                            if (iter < 0) glitches.add(new Integer[]{x, finalY});
+                            map[finalY][x] = iter;
                         }
-                        double[] pos = rebase ? getDelta(x, y, rebaseX, rebaseY) : getDelta(x, y, baseX, baseY);
-                        int iter = getIter(pos[0], pos[1], ref);
-
-                        if (iter < 0) glitches.add(new Integer[]{x, y});
-                        map[y][x] = iter;
                     }
-                }
+                }));
+            }
+
+            for (int y = 0; y < height; y += 2) {
+                int finalY = y;
+                futures.add(service.submit(() -> {
+                    for (int x = 1; x < width; x += 2) {
+                        if (!rebase || map[finalY][x] < 0) {
+                            if (finalY < height - 1 && x < width - 1) {
+                                int left = map[finalY][x - 1];
+                                int right = map[finalY][x + 1];
+                                if (left == right) {
+                                    map[finalY][x] = left;
+                                    continue;
+                                }
+                            }
+                            double[] pos = rebase ? getDelta(x, finalY, rebaseX, rebaseY) : getDelta(x, finalY, baseX, baseY);
+                            int iter = getIter(pos[0], pos[1], ref);
+
+                            if (iter < 0) glitches.add(new Integer[]{x, finalY});
+                            map[finalY][x] = iter;
+                        }
+                    }
+                }));
             }
             for (int y = 1; y < height; y += 2) {
-                for (int x = 0; x < width; x++) {
-                    if (!rebase || map[y][x] < 0) {
-                        if (y < height - 1) {
-                            int up = map[y - 1][x];
-                            int down = map[y + 1][x];
-                            if (up == down) {
-                                map[y][x] = down;
-                                continue;
+                int finalY = y;
+                futures.add(service.submit(() -> {
+                    for (int x = 0; x < width; x++) {
+                        if (!rebase || map[finalY][x] < 0) {
+                            if (finalY < height - 1) {
+                                int up = map[finalY - 1][x];
+                                int down = map[finalY + 1][x];
+                                if (up == down) {
+                                    map[finalY][x] = down;
+                                    continue;
+                                }
                             }
-                        }
-                        double[] pos = rebase ? getDelta(x, y, rebaseX, rebaseY) : getDelta(x, y, baseX, baseY);
-                        int iter = getIter(pos[0], pos[1], ref);
+                            double[] pos = rebase ? getDelta(x, finalY, rebaseX, rebaseY) : getDelta(x, finalY, baseX, baseY);
+                            int iter = getIter(pos[0], pos[1], ref);
 
-                        if (iter < 0) glitches.add(new Integer[]{x, y});
-                        map[y][x] = iter;
+                            if (iter < 0) glitches.add(new Integer[]{x, finalY});
+                            map[finalY][x] = iter;
+                        }
                     }
+                }));
+            }
+
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
                 }
             }
 
