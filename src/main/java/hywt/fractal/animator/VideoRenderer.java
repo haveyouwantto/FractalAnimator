@@ -55,9 +55,14 @@ public class VideoRenderer {
         this.interpolator = interpolator;
     }
 
+
     public void ffmpegRender(KeyframeManager manager, String path) throws Exception {
+        ffmpegRender(manager, path, "ffmpeg");
+    }
+
+    public void ffmpegRender(KeyframeManager manager, String path, String ffmpeg) throws Exception {
         if (interpolator == null) throw new IllegalStateException("Interpolator not set.");
-        FFmpegProcess process = new FFmpegProcess(width, height, fps, path, "");
+        FFmpegProcess process = new FFmpegProcess(width, height, fps, ffmpeg, path, "");
         process.start();
 
         startTime = 2;
@@ -150,7 +155,7 @@ public class VideoRenderer {
     }
 
     private void putImage(BufferedImage image, Graphics2D g2d, double factor, int bgWidth, int bgHeight) {
-        double scaleFactor = Math.pow(2, factor) * ((double) (bgWidth) / Math.max(image.getWidth(), image.getHeight()));
+        double scaleFactor = Math.pow(2, factor) * ((double) (Math.max(bgWidth, bgHeight)) / Math.max(image.getWidth(), image.getHeight()));
 //        System.out.println();
 
         int imgWidth = image.getWidth();
@@ -174,8 +179,8 @@ public class VideoRenderer {
         return renderedFrames;
     }
 
-    public synchronized int getTotalFrames(){
-        return (int) ((startTime+endTime+ interpolator.getDuration())*fps);
+    public synchronized int getTotalFrames() {
+        return (int) ((startTime + endTime + interpolator.getDuration()) * fps);
     }
 
     public synchronized boolean isFinished() {

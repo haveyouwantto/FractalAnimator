@@ -12,7 +12,7 @@ public class ProgressDialog extends JFrame {
 
     public ProgressDialog(VideoRenderer renderer) {
         setTitle("Render progress");
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setCloseable(false);
         bar = new JProgressBar(0, 1000);
         bar.setPreferredSize(new Dimension(240,30));
         bar.setStringPainted(true);
@@ -21,6 +21,13 @@ public class ProgressDialog extends JFrame {
         pack();
 
         this.renderer = renderer;
+    }
+
+    public void setCloseable(boolean closeable){
+        if(closeable)
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        else
+            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
     public void start() {
@@ -36,8 +43,6 @@ public class ProgressDialog extends JFrame {
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
-            } finally {
-                setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             }
         });
 

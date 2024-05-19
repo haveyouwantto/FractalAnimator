@@ -15,9 +15,9 @@ public class FFmpegProcess {
 
     private ProcessBuilder builder;
 
-    public FFmpegProcess(int width, int height, double fps, String path, String params) {
+    public FFmpegProcess(int width, int height, double fps, String ffmpeg, String path, String params) {
         builder = new ProcessBuilder(
-                "ffmpeg",
+                ffmpeg,
                 "-r", String.valueOf(fps),
                 "-colorspace", "bt709",
                 "-pix_fmt", "bgr24",
