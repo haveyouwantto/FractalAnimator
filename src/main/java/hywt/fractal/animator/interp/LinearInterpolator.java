@@ -1,6 +1,6 @@
 package hywt.fractal.animator.interp;
 
-public class LinearInterpolator implements Interpolator {
+public class LinearInterpolator extends Interpolator {
     private double[] xValues;
     private double[] yValues;
 
@@ -26,7 +26,12 @@ public class LinearInterpolator implements Interpolator {
     }
 
     @Override
-    public double getDuration() {
+    public double getFirst() {
+        return xValues[0];
+    }
+
+    @Override
+    public double getLast() {
         return xValues[xValues.length - 1];
     }
 

@@ -1,13 +1,24 @@
 package hywt.fractal.animator.interp;
 
-public interface Interpolator {
+public abstract class Interpolator {
     /**
      * Returns the interpolated value at the specified point.
      *
      * @param newX the point to interpolate at
      * @return the interpolated value at the specified point
      */
-    double get(double newX);
+    public abstract double get(double newX);
 
-    double getDuration();
+
+    public abstract double getFirst();
+
+    public abstract double getLast();
+
+    public double getDuration(){
+        return getLast();
+    }
+
+    public boolean isOutside(double x) {
+        return x > getLast();
+    }
 }

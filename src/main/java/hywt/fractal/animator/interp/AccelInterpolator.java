@@ -3,7 +3,7 @@ package hywt.fractal.animator.interp;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class AccelInterpolator implements Interpolator {
+public class AccelInterpolator extends Interpolator {
     TreeMap<Double, TurningPoint> points;
 
     public AccelInterpolator(double[][] speedDef) {
@@ -32,7 +32,12 @@ public class AccelInterpolator implements Interpolator {
     }
 
     @Override
-    public double getDuration() {
+    public double getFirst() {
+        return points.firstKey();
+    }
+
+    @Override
+    public double getLast() {
         return points.lastKey();
     }
 

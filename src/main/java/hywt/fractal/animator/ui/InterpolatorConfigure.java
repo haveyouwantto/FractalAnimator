@@ -21,7 +21,7 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
     public void init() throws Exception {
 
         setLayout(new BorderLayout());
-        extraFields = new HashMap<>();
+        extraFields = new LinkedHashMap<>();
 
         JPanel editPanel = new JPanel();
         editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
@@ -32,7 +32,7 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
         editPanel.add(inputPanel);
 
         addField("time", "Time",0);
-        addField("zoom", "Zoom",0);
+        addField("frame", "Frame",0);
 
         pointList = new ArrayList<>();
 

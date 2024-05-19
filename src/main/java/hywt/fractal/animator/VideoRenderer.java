@@ -37,7 +37,7 @@ public class VideoRenderer {
 
         indicators = new LinkedList<>();
 
-        int processors = Runtime.getRuntime().availableProcessors();
+        int processors = 1;//Runtime.getRuntime().availableProcessors();
         service = Executors.newFixedThreadPool(processors);
         framePool = new ArrayBlockingQueue<>(processors * 2);
         for (int i = 0; i < processors * 2; i++) {
@@ -80,7 +80,7 @@ public class VideoRenderer {
                 double t = frameNum * 1.0 / fps;
                 double v = interpolator.get(t);
                 currentZoom = v;
-                if (currentZoom > i + 1) break;
+                if (currentZoom > i + 1 || interpolator.isOutside(t)) break;
 //                System.out.printf("%.2f %.2f %.2f\n", t,v,zooms);
                 scales.add(v);
                 frameNum++;
