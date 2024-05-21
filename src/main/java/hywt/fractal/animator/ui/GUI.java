@@ -92,6 +92,7 @@ public class GUI extends JFrame {
 
         importerSelect.addItem(FZSequenceConfigure.class);
         importerSelect.addItem(TestSequenceConfigure.class);
+        importerSelect.addItem(KFPNGSequenceConfigure.class);
         importerSelect.addActionListener(e -> {
             try {
                 Component component = ((BorderLayout) inputPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);

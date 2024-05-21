@@ -22,7 +22,7 @@ public class FZKeyframeManager extends KeyframeManager {
             try (Scanner sc = new Scanner(new FileInputStream(info))) {
                 String size = sc.nextLine().split(":")[1].strip();
 
-                frameList.add(new FZFractalFrame(file, FractalScale.fromSize(size)));
+                frameList.add(new ImageFileFractalFrame(file, FractalScale.fromSize(size)));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

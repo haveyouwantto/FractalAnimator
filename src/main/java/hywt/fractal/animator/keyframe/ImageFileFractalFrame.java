@@ -5,11 +5,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class FZFractalFrame extends FractalFrame {
+public class ImageFileFractalFrame extends FractalFrame {
     public File imageFile;
     private BufferedImage image;
 
-    FZFractalFrame(File file, FractalScale scale) {
+    ImageFileFractalFrame(File file, FractalScale scale) {
         this.imageFile = file;
         this.scale = scale;
     }
