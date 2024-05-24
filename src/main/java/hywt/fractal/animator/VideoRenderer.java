@@ -7,6 +7,7 @@ import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,8 @@ public class VideoRenderer {
     private double startTime;
     private double endTime;
 
+    private int mergeFrames;
+
     public VideoRenderer(int width, int height, double fps) {
         this.width = width;
         this.height = height;
@@ -37,7 +40,7 @@ public class VideoRenderer {
 
         indicators = new LinkedList<>();
 
-        int processors = 1;//Runtime.getRuntime().availableProcessors();
+        int processors = Runtime.getRuntime().availableProcessors();
         service = Executors.newFixedThreadPool(processors);
         framePool = new ArrayBlockingQueue<>(processors * 2);
         for (int i = 0; i < processors * 2; i++) {
@@ -45,6 +48,7 @@ public class VideoRenderer {
         }
 
         renderedFrames = 0;
+        mergeFrames = 2;
     }
 
     public Interpolator getInterpolator() {
@@ -70,6 +74,8 @@ public class VideoRenderer {
         List<Double> initScales = Collections.nCopies((int) (fps * startTime), 0.0);
         renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
 
+        FractalFrame[] fractalFrames = new FractalFrame[mergeFrames];
+
         int frameNum = 0;
         double currentZoom = 0;
         for (int i = 0; i < manager.size(); i++) {
@@ -86,12 +92,14 @@ public class VideoRenderer {
                 frameNum++;
             }
 
+            fractalFrames[0] = frame;
+            for (int j = 1; j < mergeFrames; j++) {
+                fractalFrames[j] = manager.get(i + j);
+            }
+
             if (!scales.isEmpty()) {
                 renderFrame(scales, process,
-                        frame,
-                        manager.get(i + 1),
-                        manager.get(i + 2),
-                        manager.get(i + 3)
+                        fractalFrames
                 );
                 frame.close();
             }
@@ -105,9 +113,9 @@ public class VideoRenderer {
         finished = true;
     }
 
-
-    public void renderFrame(List<Double> factors, FFmpegProcess process, FractalFrame... frames)
+    private void renderFrame(List<Double> factors, FFmpegProcess process, FractalFrame... frames)
             throws Exception {
+
         List<Future<BufferedImage>> futures = new LinkedList<>();
 
         int baseFactor = factors.get(0).intValue();
@@ -130,10 +138,12 @@ public class VideoRenderer {
                 int bgHeight = buffer.getHeight();
 
                 for (int i = 0; i < images.length; i++) {
-                    if (frames[i] != null)
+                    if (frames[i] != null) {
                         putImage(images[i], g2d, (factor - baseFactor) - i, bgWidth, bgHeight);
+                    }
                 }
 
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
                 for (ScaleIndicator indicator : indicators) {
                     indicator.draw(g2d, new FractalScale(frames[0].getScale().getZooms() + (factor - baseFactor) + scaleFix), width, height);
                 }
@@ -163,6 +173,13 @@ public class VideoRenderer {
 
         double offsetX = (bgWidth - imgWidth * scaleFactor) / 2;
         double offsetY = (bgHeight - imgHeight * scaleFactor) / 2;
+
+        float opacity = (float) Math.min(1, Math.pow(2, factor));
+
+        g2d.setComposite(
+                AlphaComposite.getInstance(
+                        AlphaComposite.SRC_OVER, opacity
+                ));
 
         g2d.drawImage(image, new AffineTransform(scaleFactor, 0, 0, scaleFactor, offsetX, offsetY), null);
     }
