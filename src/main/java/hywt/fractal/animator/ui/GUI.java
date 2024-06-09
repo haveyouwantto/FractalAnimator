@@ -29,6 +29,8 @@ public class GUI extends JFrame {
     private ManagerConfigure managerConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
 
+    private EncodingParam selectedParam;
+
     public GUI() {
 
         setTitle("Fractal Animator");
@@ -79,9 +81,18 @@ public class GUI extends JFrame {
         JLabel ffmpegLabel = new JLabel("FFmpeg: ");
         ffmpegCmd = new JTextField("ffmpeg");
 
-
         genOptionsPanel.add(ffmpegLabel);
         genOptionsPanel.add(ffmpegCmd);
+
+        JLabel paramLabel = new JLabel("Encoder: ");
+
+        JComboBox<EncodingParam> paramJComboBox = new JComboBox<>();
+        Arrays.stream(EncodingParam.values()).forEach(paramJComboBox::addItem);
+        paramJComboBox.addActionListener(e-> selectedParam = (EncodingParam) paramJComboBox.getSelectedItem());
+
+        genOptionsPanel.add(paramLabel);
+        genOptionsPanel.add(paramJComboBox);
+
 
         bottomPanel.add(genOptionsPanel);
 
@@ -133,7 +144,7 @@ public class GUI extends JFrame {
         JPanel interpPanel = new JPanel();
         interpPanel.setLayout(new BorderLayout());
 
-        JComboBox<Class<? extends InterpolatorConfigure>> interpSelect = new JComboBox<>();
+        JComboBox<Class<? extends InterpolatorConfigure<?>>> interpSelect = new JComboBox<>();
 
         interpSelect.addItem(LinearInterpolatorConfigure.class);
         interpSelect.addItem(AccelInterpolatorConfigure.class);
@@ -248,7 +259,7 @@ public class GUI extends JFrame {
                 File finalSelectedFile = selectedFile;
                 new Thread(() -> {
                     try {
-                        renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath(), ffmpegCmd.getText());
+                        renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath(), ffmpegCmd.getText(), selectedParam.getParam());
                     } catch (Exception e) {
                         showError(e);
                     } finally {

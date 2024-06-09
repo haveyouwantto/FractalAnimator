@@ -7,6 +7,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class FFmpegProcess {
 
@@ -15,8 +19,8 @@ public class FFmpegProcess {
 
     private ProcessBuilder builder;
 
-    public FFmpegProcess(int width, int height, double fps, String ffmpeg, String path, String params) {
-        builder = new ProcessBuilder(
+    public FFmpegProcess(int width, int height, double fps, String ffmpeg, String path, String[] additionalParam) {
+        ArrayList<String> param = new ArrayList<>(List.of(
                 ffmpeg,
                 "-r", String.valueOf(fps),
                 "-colorspace", "bt709",
@@ -24,13 +28,11 @@ public class FFmpegProcess {
                 "-f", "rawvideo",
                 "-s", String.format("%dx%d", width, height),
                 "-i", "-",
-                "-c:v", "libx264",
-                "-crf", "21",
-                "-preset", "medium",
                 "-pix_fmt", "yuv420p",
                 "-y",
-                path
-        );
+                path));
+        param.addAll(15, List.of(additionalParam));
+        builder = new ProcessBuilder(param);
         builder.redirectErrorStream(true);
     }
 
