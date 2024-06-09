@@ -48,7 +48,7 @@ public class VideoRenderer {
         }
 
         renderedFrames = 0;
-        mergeFrames = 2;
+        mergeFrames = 4;
     }
 
     public Interpolator getInterpolator() {
@@ -59,6 +59,13 @@ public class VideoRenderer {
         this.interpolator = interpolator;
     }
 
+    public int getMergeFrames() {
+        return mergeFrames;
+    }
+
+    public void setMergeFrames(int mergeFrames) {
+        this.mergeFrames = mergeFrames;
+    }
 
     public void ffmpegRender(KeyframeManager manager, String path) throws Exception {
         ffmpegRender(manager, path, "ffmpeg");
@@ -101,8 +108,8 @@ public class VideoRenderer {
                 renderFrame(scales, process,
                         fractalFrames
                 );
-                frame.close();
             }
+            frame.close();
         }
 
         List<Double> endScales = Collections.nCopies((int) (fps * endTime), (double) (manager.size() - 1));

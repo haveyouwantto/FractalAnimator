@@ -27,6 +27,7 @@ public class FFmpegProcess {
                 "-c:v", "libx264",
                 "-crf", "21",
                 "-preset", "medium",
+                "-pix_fmt", "yuv420p",
                 "-y",
                 path
         );

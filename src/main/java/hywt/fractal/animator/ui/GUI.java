@@ -12,7 +12,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GUI extends JFrame {
 
@@ -23,6 +25,7 @@ public class GUI extends JFrame {
     private final JSpinner heightSpinner;
     private final JSpinner fpsSpinner;
     private final JTextField ffmpegCmd;
+    private final JSpinner mergeSpinner;
     private ManagerConfigure managerConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
 
@@ -45,6 +48,12 @@ public class GUI extends JFrame {
         getContentPane().add(bottomPanel, BorderLayout.SOUTH);
 
         JPanel genOptionsPanel = new JPanel();
+
+        JLabel mergeLabel = new JLabel("Merge Frames:");
+        mergeSpinner = new JSpinner();
+        mergeSpinner.setValue(4);
+        genOptionsPanel.add(mergeLabel);
+        genOptionsPanel.add(mergeSpinner);
 
         JLabel widthLabel = new JLabel("Width: ");
         widthSpinner = new JSpinner();
@@ -69,6 +78,7 @@ public class GUI extends JFrame {
 
         JLabel ffmpegLabel = new JLabel("FFmpeg: ");
         ffmpegCmd = new JTextField("ffmpeg");
+
 
         genOptionsPanel.add(ffmpegLabel);
         genOptionsPanel.add(ffmpegCmd);
@@ -112,7 +122,7 @@ public class GUI extends JFrame {
                 inputPanel.repaint();
             } catch (InstantiationException | InvocationTargetException | NoSuchMethodException |
                      IllegalAccessException ex) {
-                JOptionPane.showMessageDialog(importerSelect, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                showError(ex);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -171,7 +181,7 @@ public class GUI extends JFrame {
                 fb.setLocationRelativeTo(browseBtn);
                 fb.setVisible(true);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                showError(ex);
             }
         });
         operationPanel.add(browseBtn);
@@ -179,13 +189,13 @@ public class GUI extends JFrame {
         genBtn = new JButton("Generate");
         genBtn.addActionListener(e -> {
             try {
-                if(managerConfigure.get()!=null){
+                if (managerConfigure.get() != null) {
                     generate();
-                }else{
-                    JOptionPane.showMessageDialog(this, "Missing image sequence", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    showError("Missing image sequence");
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                showError(ex);
             }
         });
         operationPanel.add(genBtn);
@@ -210,13 +220,15 @@ public class GUI extends JFrame {
             renderer.addScaleIndicator(indicator.getDeclaredConstructor().newInstance());
         }
 
+        renderer.setMergeFrames((Integer) mergeSpinner.getValue());
+
 
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setDialogType(JFileChooser.SAVE_DIALOG);
         chooser.setCurrentDirectory(new File("."));
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter("MKV files","mkv"));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("MKV files", "mkv"));
 
         int result = chooser.showSaveDialog(genBtn);
 
@@ -238,7 +250,7 @@ public class GUI extends JFrame {
                     try {
                         renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath(), ffmpegCmd.getText());
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(this, e.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        showError(e);
                     } finally {
                         setGenerateEnabled(true);
                         dialog.setCloseable(true);
@@ -249,5 +261,14 @@ public class GUI extends JFrame {
             }
         }
 
+    }
+
+    private void showError(Exception e) {
+        e.printStackTrace();
+        showError(e.getLocalizedMessage() + "\n" + Arrays.stream(e.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n")));
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
