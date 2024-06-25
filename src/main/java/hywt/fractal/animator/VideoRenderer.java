@@ -94,7 +94,7 @@ public class VideoRenderer {
                 double v = interpolator.get(t);
                 currentZoom = v;
                 if (currentZoom > i + 1 || interpolator.isOutside(t)) break;
-//                System.out.printf("%.2f %.2f %.2f\n", t,v,zooms);
+                System.out.printf("%.2f %.2f\n", t,v);
                 scales.add(v);
                 frameNum++;
             }

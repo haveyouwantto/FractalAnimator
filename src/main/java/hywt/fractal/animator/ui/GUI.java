@@ -2,6 +2,7 @@ package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.*;
 import hywt.fractal.animator.interp.Interpolator;
+import hywt.fractal.animator.interp.QuadraticInterpolator;
 import hywt.fractal.animator.keyframe.FZKeyframeManager;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
@@ -26,10 +27,9 @@ public class GUI extends JFrame {
     private final JSpinner fpsSpinner;
     private final JTextField ffmpegCmd;
     private final JSpinner mergeSpinner;
+    private final JComboBox<EncodingParam> paramJComboBox;
     private ManagerConfigure managerConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
-
-    private EncodingParam selectedParam;
 
     public GUI() {
 
@@ -86,9 +86,8 @@ public class GUI extends JFrame {
 
         JLabel paramLabel = new JLabel("Encoder: ");
 
-        JComboBox<EncodingParam> paramJComboBox = new JComboBox<>();
+        paramJComboBox = new JComboBox<>();
         Arrays.stream(EncodingParam.values()).forEach(paramJComboBox::addItem);
-        paramJComboBox.addActionListener(e-> selectedParam = (EncodingParam) paramJComboBox.getSelectedItem());
 
         genOptionsPanel.add(paramLabel);
         genOptionsPanel.add(paramJComboBox);
@@ -147,6 +146,7 @@ public class GUI extends JFrame {
         JComboBox<Class<? extends InterpolatorConfigure<?>>> interpSelect = new JComboBox<>();
 
         interpSelect.addItem(LinearInterpolatorConfigure.class);
+//        interpSelect.addItem(QuadraticInterpolatorConfigure.class);
         interpSelect.addItem(AccelInterpolatorConfigure.class);
 
         interpSelect.addActionListener(e -> {
@@ -259,7 +259,7 @@ public class GUI extends JFrame {
                 File finalSelectedFile = selectedFile;
                 new Thread(() -> {
                     try {
-                        renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath(), ffmpegCmd.getText(), selectedParam.getParam());
+                        renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath(), ffmpegCmd.getText(), ((EncodingParam)paramJComboBox.getSelectedItem()).getParam());
                     } catch (Exception e) {
                         showError(e);
                     } finally {

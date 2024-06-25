@@ -10,7 +10,7 @@ public class FZKeyframeManager extends KeyframeManager {
     List<FractalFrame> frameList;
 
     public FZKeyframeManager(File dir) throws FileNotFoundException {
-        File[] files = dir.listFiles((dir1, name) -> name.matches(".+ \\((\\d+)\\)\\.png$"));
+        File[] files = dir.listFiles((dir1, name) -> name.matches(".+ \\((\\d+)\\)\\.(png|jpg|bmp)$"));
 
         if (files == null || files.length == 0) throw new FileNotFoundException("Directory invalid.");
 
