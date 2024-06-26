@@ -2,8 +2,6 @@ package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.*;
 import hywt.fractal.animator.interp.Interpolator;
-import hywt.fractal.animator.interp.QuadraticInterpolator;
-import hywt.fractal.animator.keyframe.FZKeyframeManager;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import javax.swing.*;
@@ -11,7 +9,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Objects;
@@ -28,6 +25,7 @@ public class GUI extends JFrame {
     private final JTextField ffmpegCmd;
     private final JSpinner mergeSpinner;
     private final JComboBox<EncodingParam> paramJComboBox;
+    private final ProgressPanel progressPanel;
     private ManagerConfigure managerConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
 
@@ -94,6 +92,9 @@ public class GUI extends JFrame {
 
 
         bottomPanel.add(genOptionsPanel);
+
+        progressPanel = new ProgressPanel();
+        bottomPanel.add(progressPanel);
 
         JPanel operationPanel = new JPanel();
         bottomPanel.add(operationPanel);
@@ -250,9 +251,8 @@ public class GUI extends JFrame {
                 selectedFile = new File(selectedFile.getAbsolutePath() + ".mkv");
             }
 
-            ProgressDialog dialog = new ProgressDialog(renderer);
-            dialog.setLocationRelativeTo(genBtn);
-            dialog.start();
+//            dialog.setLocationRelativeTo(genBtn);
+            progressPanel.start(renderer);
 
             setGenerateEnabled(false);
             try {
@@ -264,7 +264,7 @@ public class GUI extends JFrame {
                         showError(e);
                     } finally {
                         setGenerateEnabled(true);
-                        dialog.setCloseable(true);
+//                        dialog.setCloseable(true);
                     }
                 }).start();
             } catch (Exception ex) {
