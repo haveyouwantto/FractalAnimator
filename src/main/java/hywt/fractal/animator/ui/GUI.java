@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -228,7 +229,16 @@ public class GUI extends JFrame {
 
         renderer.setInterpolator(interpolator);
 
-        for (Class<? extends ScaleIndicator> indicator : indiPanel.getSelected()) {
+        List<Class<? extends ScaleIndicator>> indicators = indiPanel.getSelected();
+        if (indicators.isEmpty()) {
+            String message = "In this program, refrain from disabling all scale indicators. \n" +
+                    "Due to the highly repetitive nature of fractals, the absence of indicators may confuse the audience. \n" +
+                    "It is recommended to enable at least one scale indicator to aid viewer comprehension, although it is not mandatory. \n" +
+                    "Thank you!";
+            int choice = JOptionPane.showConfirmDialog(this, message, "Warning", JOptionPane.OK_CANCEL_OPTION);
+            if(choice != JOptionPane.YES_OPTION) return;
+        }
+        for (Class<? extends ScaleIndicator> indicator : indicators) {
             renderer.addScaleIndicator(indicator.getDeclaredConstructor().newInstance());
         }
 
@@ -259,7 +269,7 @@ public class GUI extends JFrame {
                 File finalSelectedFile = selectedFile;
                 new Thread(() -> {
                     try {
-                        renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath(), ffmpegCmd.getText(), ((EncodingParam)paramJComboBox.getSelectedItem()).getParam());
+                        renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath(), ffmpegCmd.getText(), ((EncodingParam) paramJComboBox.getSelectedItem()).getParam());
                     } catch (Exception e) {
                         showError(e);
                     } finally {
@@ -281,5 +291,9 @@ public class GUI extends JFrame {
 
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showWarning(String message) {
+        JOptionPane.showMessageDialog(this, message, "Warning", JOptionPane.WARNING_MESSAGE);
     }
 }
