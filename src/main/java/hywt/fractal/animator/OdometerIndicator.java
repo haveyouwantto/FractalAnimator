@@ -16,14 +16,20 @@ public class OdometerIndicator implements ScaleIndicator {
     private static final int SCALE = 48;
     private static final int DIGITS = 6;
 
+    private double scale;
+
     public OdometerIndicator() throws IOException, FontFormatException {
-        image = new BufferedImage(SCALE / 2 * DIGITS + MARGIN * (DIGITS + 1), SCALE, BufferedImage.TYPE_3BYTE_BGR);
+        scale = 1;
+        initializeCanvas();
+        bgColor = new Color(20, 20, 20);
+    }
+
+    private void initializeCanvas() throws IOException, FontFormatException {
+        image = new BufferedImage((int) (SCALE * scale / 2 * DIGITS + MARGIN * scale * (DIGITS + 1)), (int) (SCALE * scale), BufferedImage.TYPE_3BYTE_BGR);
         g = image.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Font font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()).deriveFont((float) SCALE);
+        Font font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()).deriveFont((float) (SCALE * scale));
         g.setFont(font);
-
-        bgColor = new Color(20, 20, 20);
     }
 
     @Override
@@ -54,19 +60,25 @@ public class OdometerIndicator implements ScaleIndicator {
             }
 
             if (i == 0 || isNine) {
-                int yPos = (int) (SCALE - 8 - percent * SCALE);
+                int yPos = (int) ((SCALE - 8 - percent * SCALE) * this.scale);
 
-                this.g.drawString(String.valueOf(digit), image.getWidth() - SCALE / 2 * (i + 1) - MARGIN * (i + 1), yPos);
+                this.g.drawString(String.valueOf(digit), (int) (image.getWidth() - SCALE * this.scale / 2 * (i + 1) - MARGIN * this.scale * (i + 1)), yPos);
 
                 int next = digit + 1;
                 if (next > 9) next = 0;
-                this.g.drawString(String.valueOf(next), image.getWidth() - SCALE / 2 * (i + 1) - MARGIN * (i + 1), yPos + SCALE);
+                this.g.drawString(String.valueOf(next), (int) (image.getWidth() - SCALE * this.scale / 2 * (i + 1) - MARGIN * this.scale * (i + 1)), (int) (yPos + SCALE * this.scale));
             } else {
-                this.g.drawString(String.valueOf(digit), image.getWidth() - SCALE / 2 * (i + 1) - MARGIN * (i + 1), SCALE - 8);
+                this.g.drawString(String.valueOf(digit), (int) (image.getWidth() - SCALE * this.scale / 2 * (i + 1) - MARGIN * this.scale * (i + 1)), (int) ((SCALE - 8) * this.scale));
             }
         }
 
         g.drawImage(image, width / 2 - image.getWidth() / 2, height - image.getHeight(), null);
+    }
+
+    @Override
+    public void setScale(double scale) throws IOException, FontFormatException {
+        this.scale = scale;
+        initializeCanvas();
     }
 
 }

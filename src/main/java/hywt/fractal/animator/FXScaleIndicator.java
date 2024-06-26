@@ -33,4 +33,9 @@ public class FXScaleIndicator implements ScaleIndicator {
         g.setColor(Color.WHITE);
         g.drawString(content, drawX, (int) (height - 8 * scale));
     }
+
+    @Override
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
 }

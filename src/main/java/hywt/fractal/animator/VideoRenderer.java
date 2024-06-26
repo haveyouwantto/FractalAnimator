@@ -71,20 +71,28 @@ public class VideoRenderer {
         ffmpegRender(manager, path, "ffmpeg", new String[]{});
     }
 
-    public void ffmpegRender(KeyframeManager manager, String path, String ffmpeg,String[] add) throws Exception {
+    public void ffmpegRender(KeyframeManager manager, String path, String ffmpeg, String[] add) throws Exception {
         if (interpolator == null) throw new IllegalStateException("Interpolator not set.");
         FFmpegProcess process = new FFmpegProcess(width, height, fps, ffmpeg, path, add);
         process.start();
 
         startTime = 2;
         endTime = 2;
+
+        double indicatorScale = width / 1920.0;
+        for (ScaleIndicator indicator : indicators) {
+            indicator.setScale(indicatorScale);
+        }
+
         List<Double> initScales = Collections.nCopies((int) (fps * startTime), 0.0);
         renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
 
         FractalFrame[] fractalFrames = new FractalFrame[mergeFrames];
 
         int frameNum = 0;
-        double currentZoom = 0;
+        double currentZoom;
+
+
         for (int i = 0; i < manager.size(); i++) {
             FractalFrame frame = manager.get(i);
             List<Double> scales = new ArrayList<>();
@@ -94,7 +102,7 @@ public class VideoRenderer {
                 double v = interpolator.get(t);
                 currentZoom = v;
                 if (currentZoom > i + 1 || interpolator.isOutside(t)) break;
-                System.out.printf("%.2f %.2f\n", t,v);
+                System.out.printf("%.2f %.2f\n", t, v);
                 scales.add(v);
                 frameNum++;
             }

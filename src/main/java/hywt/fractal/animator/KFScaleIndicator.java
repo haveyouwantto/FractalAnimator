@@ -27,4 +27,9 @@ public class KFScaleIndicator implements ScaleIndicator {
         g.setColor(Color.WHITE);
         g.drawString(content, x, (int) (48 * scale));
     }
+
+    @Override
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
 }
