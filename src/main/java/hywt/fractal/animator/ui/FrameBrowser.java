@@ -13,9 +13,9 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 
 public class FrameBrowser extends JFrame {
+    private final JSpinner spinner;
     private KeyframeManager manager;
     private JLabel infoLabel;
-    private JLabel frameNum;
     private ImagePanel imgDisplay;
     private int ord;
 
@@ -48,18 +48,14 @@ public class FrameBrowser extends JFrame {
 
         controls.add(infoLabel);
 
-        JButton prevBtn = new JButton("<");
-        prevBtn.addActionListener(e -> zoomOut());
-        controls.add(prevBtn);
+        JSeparator separator = new JSeparator();
+        separator.setOrientation(SwingConstants.VERTICAL);
+        controls.add(separator);
 
-        frameNum = new JLabel();
-        controls.add(frameNum);
+        JLabel label = new JLabel("Frame: ");
+        controls.add(label);
 
-        JButton nextBtn = new JButton(">");
-        nextBtn.addActionListener(e -> zoomIn());
-        controls.add(nextBtn);
-
-        JSpinner spinner = new JSpinner();
+        spinner = new JSpinner();
         spinner.setPreferredSize(new Dimension(100, 30));
         spinner.addChangeListener(new ChangeListener() {
             @Override
@@ -110,7 +106,7 @@ public class FrameBrowser extends JFrame {
         imgDisplay.setImg(frame.getImage());
         imgDisplay.updateUI();
 
-        frameNum.setText(String.valueOf(ord));
+        spinner.setValue(ord);
         frame.close();
     }
 
