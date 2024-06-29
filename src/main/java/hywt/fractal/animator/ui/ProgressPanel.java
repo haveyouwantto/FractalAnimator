@@ -7,6 +7,8 @@ import javax.swing.*;
 public class ProgressPanel extends JProgressBar {
 
 
+    private Thread updateThread;
+
     public ProgressPanel() {
         super(0, 1000);
         setStringPainted(true);
@@ -14,7 +16,7 @@ public class ProgressPanel extends JProgressBar {
 
     public void start(VideoRenderer renderer) {
         setVisible(true);
-        Thread updateThread = new Thread(() -> {
+        updateThread = new Thread(() -> {
             try {
                 while (!renderer.isFinished()) {
                     int a = renderer.getRenderedFrames();
@@ -24,10 +26,14 @@ public class ProgressPanel extends JProgressBar {
                     Thread.sleep(16);
                 }
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+
             }
         });
 
         updateThread.start();
+    }
+
+    public void stop(){
+        updateThread.interrupt();
     }
 }

@@ -32,6 +32,7 @@ public class VideoRenderer {
     private double endTime;
 
     private int mergeFrames;
+    private FFmpegProcess process;
 
     public VideoRenderer(int width, int height, double fps) {
         this.width = width;
@@ -73,7 +74,7 @@ public class VideoRenderer {
 
     public void ffmpegRender(KeyframeManager manager, String path, String ffmpeg, String[] add) throws Exception {
         if (interpolator == null) throw new IllegalStateException("Interpolator not set.");
-        FFmpegProcess process = new FFmpegProcess(width, height, fps, ffmpeg, path, add);
+        process = new FFmpegProcess(width, height, fps, ffmpeg, path, add);
         process.start();
 
         startTime = 2;
@@ -217,5 +218,10 @@ public class VideoRenderer {
 
     public synchronized boolean isFinished() {
         return finished;
+    }
+
+    public void abort() {
+        if (process != null)
+            process.getFfmpeg().destroy();
     }
 }

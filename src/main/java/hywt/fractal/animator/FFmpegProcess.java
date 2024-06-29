@@ -71,4 +71,8 @@ public class FFmpegProcess {
         pipe.close();
         ffmpeg.waitFor();
     }
+
+    public Process getFfmpeg() {
+        return ffmpeg;
+    }
 }

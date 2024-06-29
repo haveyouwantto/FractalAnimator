@@ -30,6 +30,9 @@ public class GUI extends JFrame {
     private ManagerConfigure managerConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
 
+    private boolean rendering;
+    private VideoRenderer renderer;
+
     public GUI() {
 
         setTitle("Fractal Animator");
@@ -203,7 +206,10 @@ public class GUI extends JFrame {
         genBtn.addActionListener(e -> {
             try {
                 if (managerConfigure.get() != null) {
-                    generate();
+                    if(!this.rendering)
+                        generate();
+                    else
+                        renderer.abort();
                 } else {
                     showError("Missing image sequence");
                 }
@@ -216,13 +222,8 @@ public class GUI extends JFrame {
         pack();
     }
 
-    public void setGenerateEnabled(boolean b) {
-        browseBtn.setEnabled(b);
-        genBtn.setEnabled(b);
-    }
-
     public void generate() throws Exception {
-        VideoRenderer renderer = new VideoRenderer((Integer) widthSpinner.getValue(), (Integer) heightSpinner.getValue(), (Integer) fpsSpinner.getValue());
+        renderer = new VideoRenderer((Integer) widthSpinner.getValue(), (Integer) heightSpinner.getValue(), (Integer) fpsSpinner.getValue());
 
         KeyframeManager manager = managerConfigure.get();
         Interpolator interpolator = interpConfigure.get();
@@ -236,7 +237,7 @@ public class GUI extends JFrame {
                     "It is recommended to enable at least one scale indicator to aid viewer comprehension, although it is not mandatory. \n" +
                     "Thank you!";
             int choice = JOptionPane.showConfirmDialog(this, message, "Warning", JOptionPane.OK_CANCEL_OPTION);
-            if(choice != JOptionPane.YES_OPTION) return;
+            if (choice != JOptionPane.YES_OPTION) return;
         }
         for (Class<? extends ScaleIndicator> indicator : indicators) {
             renderer.addScaleIndicator(indicator.getDeclaredConstructor().newInstance());
@@ -261,20 +262,20 @@ public class GUI extends JFrame {
                 selectedFile = new File(selectedFile.getAbsolutePath() + ".mkv");
             }
 
-//            dialog.setLocationRelativeTo(genBtn);
             progressPanel.start(renderer);
 
-            setGenerateEnabled(false);
+            setRendering(true);
             try {
                 File finalSelectedFile = selectedFile;
                 new Thread(() -> {
                     try {
                         renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath(), ffmpegCmd.getText(), ((EncodingParam) paramJComboBox.getSelectedItem()).getParam());
+                        showInfo("Render completed.");
                     } catch (Exception e) {
                         showError(e);
                     } finally {
-                        setGenerateEnabled(true);
-//                        dialog.setCloseable(true);
+                        setRendering(false);
+                        progressPanel.stop();
                     }
                 }).start();
             } catch (Exception ex) {
@@ -295,5 +296,20 @@ public class GUI extends JFrame {
 
     private void showWarning(String message) {
         JOptionPane.showMessageDialog(this, message, "Warning", JOptionPane.WARNING_MESSAGE);
+    }
+
+    private void showInfo(String message) {
+        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void setRendering(boolean rendering) {
+        this.rendering = rendering;
+        browseBtn.setEnabled(!rendering);
+        if (rendering) {
+            genBtn.setText("Abort");
+        }
+        else {
+            genBtn.setText("Generate");
+        }
     }
 }
