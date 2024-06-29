@@ -198,7 +198,9 @@ public class GUI extends JFrame {
                 FrameBrowser fb = new FrameBrowser(managerConfigure.get());
                 fb.setLocationRelativeTo(browseBtn);
                 fb.setVisible(true);
-            } catch (Exception ex) {
+            } catch (NullPointerException ex) {
+                showError("No keyframes selected.");
+            } catch (Exception ex){
                 showError(ex);
             }
         });
