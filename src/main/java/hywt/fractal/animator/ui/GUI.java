@@ -118,6 +118,7 @@ public class GUI extends JFrame {
         importerSelect.addItem(FZSequenceConfigure.class);
         importerSelect.addItem(TestSequenceConfigure.class);
         importerSelect.addItem(KFPNGSequenceConfigure.class);
+        importerSelect.setRenderer(new ClassNameListRenderer());
         importerSelect.addActionListener(e -> {
             try {
                 Component component = ((BorderLayout) inputPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
@@ -154,6 +155,7 @@ public class GUI extends JFrame {
 //        interpSelect.addItem(QuadraticInterpolatorConfigure.class);
         interpSelect.addItem(AccelInterpolatorConfigure.class);
 
+        interpSelect.setRenderer(new ClassNameListRenderer());
         interpSelect.addActionListener(e -> {
             try {
                 Component component = ((BorderLayout) interpPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
