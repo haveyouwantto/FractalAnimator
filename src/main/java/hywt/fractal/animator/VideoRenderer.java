@@ -9,6 +9,10 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -93,6 +97,7 @@ public class VideoRenderer {
         int frameNum = 0;
         double currentZoom;
 
+        DataOutputStream fos = new DataOutputStream(new FileOutputStream("timeline.bin"));
 
         for (int i = 0; i < manager.size(); i++) {
             FractalFrame frame = manager.get(i);
@@ -101,6 +106,9 @@ public class VideoRenderer {
             while (true) {
                 double t = frameNum * 1.0 / fps;
                 double v = interpolator.get(t);
+
+                fos.writeDouble(v); // debug
+
                 currentZoom = v;
                 if (currentZoom > i + 1 || interpolator.isOutside(t)) break;
                 System.out.printf("%.2f %.2f\n", t, v);

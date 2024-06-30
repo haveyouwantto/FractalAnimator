@@ -2,6 +2,7 @@ package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.*;
 import hywt.fractal.animator.interp.Interpolator;
+import hywt.fractal.animator.interp.SlopeAccelInterpolator;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import javax.swing.*;
@@ -152,7 +153,7 @@ public class GUI extends JFrame {
         JComboBox<Class<? extends InterpolatorConfigure<?>>> interpSelect = new JComboBox<>();
 
         interpSelect.addItem(LinearInterpolatorConfigure.class);
-//        interpSelect.addItem(QuadraticInterpolatorConfigure.class);
+        interpSelect.addItem(SlopeAccelInterpolatorConfigure.class);
         interpSelect.addItem(AccelInterpolatorConfigure.class);
 
         interpSelect.setRenderer(new ClassNameListRenderer());
