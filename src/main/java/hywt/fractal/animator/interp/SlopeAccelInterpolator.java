@@ -64,33 +64,67 @@ public class SlopeAccelInterpolator extends Interpolator {
         return points.lastKey();
     }
 
-    public static double interpolate(double x1, double x2, double y1, double y2, double x, double k1, double k2, double
-            a, double b) {
+    public double interpolate(double x1, double x2, double y1, double y2, double x, double k1, double k2, double a, double b) {
         if (a + b > 1) {
             throw new IllegalArgumentException("a + b must not be greater than 1");
         }
 
-        double d = x2 - x1;
+        double d = x2 - x1; // Length of the interval
 
+        // Normalize y1 and y2
         double y1o = y1;
         y1 /= d;
         y2 /= d;
 
-        double S = y2 - y1;
+        double S = y2 - y1; // Slope change over the interval
+
+        // Calculate the height of the shape (yt)
         double yt = (2 * S - a * k1 - b * k2) / (2 - a - b);
+
+        // Calculate start and end slopes
+        double startSlope = (a * k1) / a;
+        double endSlope = (yt * a) / a;
+
+        // Check if slopes have reversed signs
+        boolean reversedSign = isReversedSign(startSlope, endSlope);
 
         double integral = y1o;
 
-        double t = min(x, a);
-        integral += (((yt - k1) * (t * t)) / (2 * a) + k1 * t) * d;
+        // Perform integration based on the sign of slopes
+        if (reversedSign) {
+            if (k2 == 0) {
+                double part1p = S / (k1 / 2);
 
-        t = max(0, min(x - a, 1 - a - b));
-        integral += yt * t * d;
+                double t = Math.min(x, part1p);
+                integral += (((-k1) * (t * t)) / (2 * part1p) + k1 * t) * d;
 
-        t = max(0, min(x - 1 + b, 1));
-        integral += -d * ((t * ((t - 2 * b) * yt - k2 * t)) / (2 * b));
+            } else {
+                double part1p = S / k1;
+                double bottom = S / 2;
+
+                double t = Math.min(x, part1p);
+                integral += (((-k1) * (t * t)) / (2 * part1p) + k1 * t) * d;
+
+                t = x;
+                integral += bottom * t * d;
+            }
+        } else {
+            double t = Math.min(x, a);
+            integral += (((yt - k1) * (t * t)) / (2 * a) + k1 * t) * d;
+
+            t = Math.max(0, Math.min(x - a, 1 - a - b));
+            integral += yt * t * d;
+
+            t = Math.max(0, Math.min(x - 1 + b, 1));
+            integral += -d * ((t * ((t - 2 * b) * yt - k2 * t)) / (2 * b));
+        }
 
         return integral;
+    }
+
+    // Function to check if slopes have reversed signs
+    public static boolean isReversedSign(double a, double b) {
+        return (a >= 0) ^ (b >= 0);
     }
 
     private record TurningPoint(double zooms) {

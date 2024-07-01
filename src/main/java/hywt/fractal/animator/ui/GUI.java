@@ -2,7 +2,6 @@ package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.*;
 import hywt.fractal.animator.interp.Interpolator;
-import hywt.fractal.animator.interp.SlopeAccelInterpolator;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import javax.swing.*;
