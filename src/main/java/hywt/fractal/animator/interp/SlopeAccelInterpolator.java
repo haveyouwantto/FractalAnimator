@@ -13,7 +13,7 @@ public class SlopeAccelInterpolator extends Interpolator {
     public SlopeAccelInterpolator(double[][] speedDef) {
         points = new TreeMap<>();
         for (double[] def : speedDef) {
-            points.put(def[0], new TurningPoint(def[1]));
+            points.put(def[0], new TurningPoint(def[1], def[2]));
         }
         System.out.println(points);
     }
@@ -46,12 +46,25 @@ public class SlopeAccelInterpolator extends Interpolator {
                         (b.getValue().zooms - a.getValue().zooms) / (b.getKey() - a.getKey())) / 2;
             }
 
+
+            double interpA, interpB;
+
+            double length = b.getKey() - a.getKey();
+            if (length > a.getValue().maxTransition) {
+                interpA = a.getValue().maxTransition / length / 2;
+                interpB = interpA;
+            } else {
+                interpA = 0.5;
+                interpB = 0.5;
+            }
+
+
             return interpolate(
                     a.getKey(), b.getKey(),
                     a.getValue().zooms,
                     b.getValue().zooms,
                     (newX - a.getKey()) / duration,
-                    slope1, slope2, 0.5, 0.5
+                    slope1, slope2, interpA, interpB
             );
         } else return b.getValue().zooms + newX;
     }
@@ -129,6 +142,6 @@ public class SlopeAccelInterpolator extends Interpolator {
         return (a >= 0) ^ (b >= 0);
     }
 
-    private record TurningPoint(double zooms) {
+    private record TurningPoint(double zooms, double maxTransition) {
     }
 }

@@ -5,6 +5,8 @@ import hywt.fractal.animator.interp.KeyPoint;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
@@ -80,6 +82,14 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
 
         });
         btnPanel.add(modBtn);
+
+        pointJList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                System.out.println(e.getClickCount());
+            }
+        });
     }
 
     protected Map<String, Double> getKeyMap() {
@@ -114,18 +124,18 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
 
     public abstract T get();
 
-    static class LabeledField extends JPanel {
+    static class LabeledField extends BinaryPanel {
 
         private JLabel label;
         private JTextField field;
 
         public LabeledField(String key) {
-            setLayout(new BorderLayout());
+            super();
             label = new JLabel(key + ": ");
             field = new JTextField();
             field.setPreferredSize(new Dimension(60, 30));
-            add(label,BorderLayout.WEST);
-            add(field,BorderLayout.CENTER);
+            addLeft(label);
+            addRight(field);
         }
     }
 }

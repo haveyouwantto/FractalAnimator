@@ -8,11 +8,12 @@ import java.util.Arrays;
 public class SlopeAccelInterpolatorConfigure extends InterpolatorConfigure<SlopeAccelInterpolator> {
     @Override
     public SlopeAccelInterpolator get() {
-        double[][] speedDef = new double[pointList.size()][2];
+        double[][] speedDef = new double[pointList.size()][3];
         for (int i = 0; i < pointList.size(); i++) {
             KeyPoint point = pointList.get(i);
             speedDef[i][0] = point.getX();
             speedDef[i][1] = point.getY();
+            speedDef[i][2] = point.getData("maxTrans");
         }
         System.out.println(Arrays.toString(speedDef));
 
@@ -22,6 +23,7 @@ public class SlopeAccelInterpolatorConfigure extends InterpolatorConfigure<Slope
     @Override
     public void init() throws Exception {
         super.init();
+        addField("maxTrans","Max Transition", 10);
         addDefault();
     }
 }
