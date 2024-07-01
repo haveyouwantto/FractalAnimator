@@ -10,6 +10,7 @@ public class OdometerIndicator implements ScaleIndicator {
     private BufferedImage image;
     private Graphics2D g;
     private Color bgColor;
+    private Font font;
 
     private static final int MARGIN = 6;
     private static final int SCALE = 48;
@@ -27,7 +28,7 @@ public class OdometerIndicator implements ScaleIndicator {
         image = new BufferedImage((int) (SCALE * scale / 2 * DIGITS + MARGIN * scale * (DIGITS + 1)), (int) (SCALE * scale), BufferedImage.TYPE_3BYTE_BGR);
         g = image.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        setFont(Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()).deriveFont((float) (SCALE * scale)));
+        setFont(Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()));
     }
 
     @Override
@@ -81,7 +82,7 @@ public class OdometerIndicator implements ScaleIndicator {
 
     @Override
     public void setFont(Font font) {
-        g.setFont(font);
+        this.font = font;
     }
 
 }

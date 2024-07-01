@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.List;
 
 public class IndicatorSelectorPanel extends JPanel implements Exportable {
-    private final JLabel fontName;
     private final FontChooser fontChooser;
     Map<Class<? extends ScaleIndicator>, JCheckBox> checkBoxMap;
 
@@ -39,14 +38,12 @@ public class IndicatorSelectorPanel extends JPanel implements Exportable {
             checkBoxMap.put(indicatorClass, checkBox);
         }
 
-        fontName = new JLabel("Internal font");
         JButton fontSelector = new JButton("Choose font");
         fontSelector.addActionListener(e -> {
             fontChooser.setVisible(true);
         });
 
         JPanel fontPanel = new JPanel();
-        fontPanel.add(fontName);
         fontPanel.add(fontSelector);
 
         add(fontPanel, BorderLayout.SOUTH);
