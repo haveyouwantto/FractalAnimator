@@ -133,6 +133,8 @@ public class FontChooser extends JFrame implements Exportable {
 
         cancel.addActionListener(cancelListener);
         confirm.addActionListener(confirmListener);
+
+        checkBox.doClick();
         pack();
     }
 

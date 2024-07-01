@@ -38,7 +38,7 @@ public class IndicatorSelectorPanel extends JPanel implements Exportable {
             checkBoxMap.put(indicatorClass, checkBox);
         }
 
-        JButton fontSelector = new JButton("Choose font");
+        JButton fontSelector = new JButton("Font");
         fontSelector.addActionListener(e -> {
             fontChooser.setLocationRelativeTo(fontSelector);
             fontChooser.setVisible(true);
