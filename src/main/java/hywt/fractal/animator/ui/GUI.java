@@ -28,6 +28,8 @@ public class GUI extends JFrame {
     private final JSpinner mergeSpinner;
     private final JComboBox<EncodingParam> paramJComboBox;
     private final ProgressPanel progressPanel;
+    private final JSpinner startTimeSpinner;
+    private final JSpinner endTimeSpinner;
     private ManagerConfigure managerConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
 
@@ -188,13 +190,6 @@ public class GUI extends JFrame {
 
         genOptionsPanel.setLayout(new BoxLayout(genOptionsPanel, BoxLayout.Y_AXIS));
 
-        BinaryPanel mergePanel = new BinaryPanel();
-        mergePanel.addLeft(new JLabel("Merge Frames:"));
-        mergeSpinner = new JSpinner();
-        mergeSpinner.setValue(4);
-        mergePanel.addRight(mergeSpinner);
-        genOptionsPanel.add(mergePanel);
-
         // Width configuration
         BinaryPanel widthPanel = new BinaryPanel();
         widthPanel.addLeft(new JLabel("Width: "));
@@ -218,6 +213,29 @@ public class GUI extends JFrame {
         fpsSpinner.setValue(60);
         fpsPanel.addRight(fpsSpinner);
         genOptionsPanel.add(fpsPanel);
+
+
+        BinaryPanel mergePanel = new BinaryPanel();
+        mergePanel.addLeft(new JLabel("Merge Frames:"));
+        mergeSpinner = new JSpinner();
+        mergeSpinner.setValue(4);
+        mergePanel.addRight(mergeSpinner);
+        genOptionsPanel.add(mergePanel);
+
+
+        BinaryPanel startTimePanel = new BinaryPanel();
+        startTimePanel.addLeft(new JLabel("Start Time:"));
+        startTimeSpinner = new JSpinner();
+        startTimeSpinner.setValue(2);
+        startTimePanel.addRight(startTimeSpinner);
+        genOptionsPanel.add(startTimePanel);
+
+        BinaryPanel endTimePanel = new BinaryPanel();
+        endTimePanel.addLeft(new JLabel("End Time:"));
+        endTimeSpinner = new JSpinner();
+        endTimeSpinner.setValue(2);
+        endTimePanel.addRight(endTimeSpinner);
+        genOptionsPanel.add(endTimePanel);
 
         // FFmpeg configuration
         BinaryPanel ffmpegPanel = new BinaryPanel();
@@ -292,7 +310,8 @@ public class GUI extends JFrame {
                                 (Integer) heightSpinner.getValue(),
                                 (Integer) fpsSpinner.getValue(),
                                 (Integer) mergeSpinner.getValue(),
-                                2,2,
+                                (Integer) startTimeSpinner.getValue(),
+                                (Integer) endTimeSpinner.getValue(),
                                 ffmpegCmd.getText(),
                                 ((EncodingParam) paramJComboBox.getSelectedItem())
                         );

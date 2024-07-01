@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class VideoRenderer {
-    private  int width;
-    private  int height;
-    private  double fps;
+    private int width;
+    private int height;
+    private double fps;
     private Interpolator interpolator;
     private final List<ScaleIndicator> indicators;
 
@@ -86,8 +86,10 @@ public class VideoRenderer {
             indicator.setScale(indicatorScale);
         }
 
-        List<Double> initScales = Collections.nCopies((int) (fps * startTime), 0.0);
-        renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
+        if (params.startTime() > 0) {
+            List<Double> initScales = Collections.nCopies((int) (fps * startTime), 0.0);
+            renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
+        }
 
         FractalFrame[] fractalFrames = new FractalFrame[mergeFrames];
 
@@ -126,8 +128,10 @@ public class VideoRenderer {
             frame.close();
         }
 
-        List<Double> endScales = Collections.nCopies((int) (fps * endTime), (double) (manager.size() - 1));
-        renderFrame(endScales, process, manager.getLast());
+        if (params.endTime() > 0) {
+            List<Double> endScales = Collections.nCopies((int) (fps * endTime), (double) (manager.size() - 1));
+            renderFrame(endScales, process, manager.getLast());
+        }
 
         process.finish();
         service.shutdown();
