@@ -30,6 +30,8 @@ public class VideoRenderer {
     private BlockingQueue<BufferedImage> framePool;
 
     private int renderedFrames;
+    private int renderedKeyframes;
+    private int totalKeyframes;
     private boolean finished;
     private double startTime;
     private double endTime;
@@ -65,6 +67,8 @@ public class VideoRenderer {
         this.height = params.height();
         this.fps = params.fps();
 
+        renderedKeyframes = 0;
+        totalKeyframes = manager.size();
 
         int processors = Runtime.getRuntime().availableProcessors();
         service = Executors.newFixedThreadPool(processors);
@@ -125,6 +129,7 @@ public class VideoRenderer {
                         fractalFrames
                 );
             }
+            renderedKeyframes = i + 1;
             frame.close();
         }
 
@@ -223,6 +228,14 @@ public class VideoRenderer {
 
     public synchronized int getTotalFrames() {
         return (int) ((startTime + endTime + interpolator.getDuration()) * fps);
+    }
+
+    public synchronized int getRenderedKeyframes(){
+        return renderedKeyframes;
+    }
+
+    public synchronized int getTotalKeyframes() {
+        return totalKeyframes;
     }
 
     public synchronized boolean isFinished() {

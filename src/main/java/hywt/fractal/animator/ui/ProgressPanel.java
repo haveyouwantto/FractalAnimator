@@ -21,7 +21,7 @@ public class ProgressPanel extends JProgressBar {
                 while (!renderer.isFinished()) {
                     int a = renderer.getRenderedFrames();
                     int b = renderer.getTotalFrames();
-                    setString(a + " / " + b);
+                    setString(String.format("%.2f%%    Frame: %d / %d  Keyframe: %d / %d", a * 100.0 / b, a, b, renderer.getRenderedKeyframes(), renderer.getTotalKeyframes()));
                     setValue((int) (a * 1000.0 / b));
                     Thread.sleep(16);
                 }
@@ -33,7 +33,7 @@ public class ProgressPanel extends JProgressBar {
         updateThread.start();
     }
 
-    public void stop(){
+    public void stop() {
         updateThread.interrupt();
     }
 }
