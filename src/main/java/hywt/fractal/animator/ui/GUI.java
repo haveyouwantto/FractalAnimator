@@ -4,6 +4,7 @@ import hywt.fractal.animator.*;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.RenderParams;
 import hywt.fractal.animator.keyframe.KeyframeLoader;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -216,7 +217,6 @@ public class GUI extends JFrame implements Exportable {
                 try {
                     DataInputStream inputStream = new DataInputStream(new FileInputStream(selectedFile));
                     String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8).strip();
-                    System.out.println(content);
                     importJSON(new JSONObject(content));
                     inputStream.close();
                 } catch (IOException ex) {
@@ -389,14 +389,14 @@ public class GUI extends JFrame implements Exportable {
     public void importJSON(JSONObject obj) {
         genOptionsPanel.importJSON(obj.getJSONObject("genOptions"));
 
+        Component component = ((BorderLayout) loaderPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+        if (component != null) {
+            loaderPanel.remove(component);
+        }
         try {
             JSONObject loader = obj.getJSONObject("loader");
             Class<?> c = Class.forName(loader.getString("type"));
             loaderSelect.setSelectedItem(c);
-            Component component = ((BorderLayout) loaderPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
-            if (component != null) {
-                loaderPanel.remove(component);
-            }
             loaderConfigure = (ManagerConfigure) c.getDeclaredConstructor().newInstance();
             loaderConfigure.setOnLoadCallable(() -> {
                 frameNum.setText("Found " + loaderConfigure.get().size() + " frames");
@@ -408,28 +408,31 @@ public class GUI extends JFrame implements Exportable {
             loaderPanel.add(loaderConfigure, BorderLayout.CENTER);
             loaderPanel.revalidate();
             loaderPanel.repaint();
+        } catch (JSONException ignored) {
+
         } catch (Exception e) {
             showError(e);
         }
 
+        component = ((BorderLayout) interpPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+        if (component != null) {
+            interpPanel.remove(component);
+        }
         try {
             JSONObject interp = obj.getJSONObject("interpolator");
             Class<?> c = Class.forName(interp.getString("type"));
             interpSelect.setSelectedItem(c);
             interpConfigure = (OptionConfigure<Interpolator>) c.getDeclaredConstructor().newInstance();
-            System.out.println(interpConfigure);
             interpConfigure.init();
             interpConfigure.importJSON(interp.getJSONObject("data"));
 
-            Component component = ((BorderLayout) interpPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
-            if (component != null) {
-                interpPanel.remove(component);
-            }
 
             interpPanel.add(interpConfigure, BorderLayout.CENTER);
             interpPanel.revalidate();
             interpPanel.repaint();
 
+
+        } catch (JSONException ignored) {
 
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException |
                  ClassNotFoundException e) {
