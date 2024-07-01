@@ -1,6 +1,7 @@
 package hywt.fractal.animator;
 
 import hywt.fractal.animator.interp.Interpolator;
+import hywt.fractal.animator.interp.RenderParams;
 import hywt.fractal.animator.keyframe.FractalFrame;
 import hywt.fractal.animator.keyframe.FractalScale;
 import hywt.fractal.animator.keyframe.KeyframeManager;
@@ -9,6 +10,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,15 +19,15 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class VideoRenderer {
-    private final int width;
-    private final int height;
-    private final double fps;
+    private  int width;
+    private  int height;
+    private  double fps;
     private Interpolator interpolator;
     private final List<ScaleIndicator> indicators;
 
     // Multithreading
-    private final ExecutorService service;
-    private final BlockingQueue<BufferedImage> framePool;
+    private ExecutorService service;
+    private BlockingQueue<BufferedImage> framePool;
 
     private int renderedFrames;
     private boolean finished;
@@ -35,19 +37,8 @@ public class VideoRenderer {
     private int mergeFrames;
     private FFmpegProcess process;
 
-    public VideoRenderer(int width, int height, double fps) {
-        this.width = width;
-        this.height = height;
-        this.fps = fps;
-
+    public VideoRenderer() {
         indicators = new LinkedList<>();
-
-        int processors = Runtime.getRuntime().availableProcessors();
-        service = Executors.newFixedThreadPool(processors);
-        framePool = new ArrayBlockingQueue<>(processors * 2);
-        for (int i = 0; i < processors * 2; i++) {
-            framePool.add(new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR));
-        }
 
         renderedFrames = 0;
         mergeFrames = 4;
@@ -69,17 +60,26 @@ public class VideoRenderer {
         this.mergeFrames = mergeFrames;
     }
 
-    public void ffmpegRender(KeyframeManager manager, String path) throws Exception {
-        ffmpegRender(manager, path, "ffmpeg", new String[]{});
-    }
+    public void ffmpegRender(KeyframeManager manager, RenderParams params, File file) throws Exception {
+        this.width = params.width();
+        this.height = params.height();
+        this.fps = params.fps();
 
-    public void ffmpegRender(KeyframeManager manager, String path, String ffmpeg, String[] add) throws Exception {
+
+        int processors = Runtime.getRuntime().availableProcessors();
+        service = Executors.newFixedThreadPool(processors);
+        framePool = new ArrayBlockingQueue<>(processors * 2);
+        for (int i = 0; i < processors * 2; i++) {
+            framePool.add(new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR));
+        }
+
+
         if (interpolator == null) throw new IllegalStateException("Interpolator not set.");
-        process = new FFmpegProcess(width, height, fps, ffmpeg, path, add);
+        process = new FFmpegProcess(width, height, fps, params.ffmpeg(), file, params.param().getParam());
         process.start();
 
-        startTime = 2;
-        endTime = 2;
+        startTime = params.startTime();
+        endTime = params.endTime();
 
         double indicatorScale = width / 1920.0;
         for (ScaleIndicator indicator : indicators) {

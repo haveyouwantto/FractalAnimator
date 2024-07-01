@@ -3,10 +3,7 @@ package hywt.fractal.animator;
 
 import java.awt.image.DataBufferByte;
 import java.awt.image.RenderedImage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +16,7 @@ public class FFmpegProcess {
 
     private ProcessBuilder builder;
 
-    public FFmpegProcess(int width, int height, double fps, String ffmpeg, String path, String[] additionalParam) {
+    public FFmpegProcess(int width, int height, double fps, String ffmpeg, File path, String[] additionalParam) {
         ArrayList<String> param = new ArrayList<>(List.of(
                 ffmpeg,
                 "-r", String.valueOf(fps),
@@ -30,7 +27,7 @@ public class FFmpegProcess {
                 "-i", "-",
                 "-pix_fmt", "yuv420p",
                 "-y",
-                path));
+                path.getAbsolutePath()));
         param.addAll(15, List.of(additionalParam));
         builder = new ProcessBuilder(param);
         builder.redirectErrorStream(true);

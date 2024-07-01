@@ -2,6 +2,7 @@ package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.*;
 import hywt.fractal.animator.interp.Interpolator;
+import hywt.fractal.animator.interp.RenderParams;
 import hywt.fractal.animator.keyframe.KeyframeManager;
 
 import javax.swing.*;
@@ -240,7 +241,7 @@ public class GUI extends JFrame {
     }
 
     public void generate() throws Exception {
-        renderer = new VideoRenderer((Integer) widthSpinner.getValue(), (Integer) heightSpinner.getValue(), (Integer) fpsSpinner.getValue());
+        renderer = new VideoRenderer();
 
         KeyframeManager manager = managerConfigure.get();
         Interpolator interpolator = interpConfigure.get();
@@ -286,7 +287,16 @@ public class GUI extends JFrame {
                 File finalSelectedFile = selectedFile;
                 new Thread(() -> {
                     try {
-                        renderer.ffmpegRender(manager, finalSelectedFile.getAbsolutePath(), ffmpegCmd.getText(), ((EncodingParam) paramJComboBox.getSelectedItem()).getParam());
+                        RenderParams params = new RenderParams(
+                                (Integer) widthSpinner.getValue(),
+                                (Integer) heightSpinner.getValue(),
+                                (Integer) fpsSpinner.getValue(),
+                                (Integer) mergeSpinner.getValue(),
+                                2,2,
+                                ffmpegCmd.getText(),
+                                ((EncodingParam) paramJComboBox.getSelectedItem())
+                        );
+                        renderer.ffmpegRender(manager, params, finalSelectedFile);
                         showInfo("Render completed.");
                     } catch (Exception e) {
                         showError(e);
