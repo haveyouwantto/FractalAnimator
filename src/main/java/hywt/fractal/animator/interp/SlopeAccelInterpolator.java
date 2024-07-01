@@ -32,15 +32,18 @@ public class SlopeAccelInterpolator extends Interpolator {
             if (a.getKey().equals(points.firstKey())) {
                 slope1 = 0;
             } else {
-                Map.Entry<Double,TurningPoint> c = points.lowerEntry(a.getKey());
-                slope1 = (a.getValue().zooms - c.getValue().zooms) / (a.getKey() - c.getKey());
+                Map.Entry<Double, TurningPoint> c = points.lowerEntry(a.getKey());
+                slope1 = ((a.getValue().zooms - c.getValue().zooms) / (a.getKey() - c.getKey()) +
+                        (b.getValue().zooms - a.getValue().zooms) / (b.getKey() - a.getKey())) / 2;
             }
 
             double slope2;
             if (b.getKey().equals(points.lastKey())) {
                 slope2 = 0;
             } else {
-                slope2 = (b.getValue().zooms - a.getValue().zooms) / (b.getKey() - a.getKey());
+                Map.Entry<Double, TurningPoint> c = points.higherEntry(b.getKey());
+                slope2 = ((c.getValue().zooms - b.getValue().zooms) / (c.getKey() - b.getKey()) +
+                        (b.getValue().zooms - a.getValue().zooms) / (b.getKey() - a.getKey())) / 2;
             }
 
             return interpolate(
@@ -48,10 +51,9 @@ public class SlopeAccelInterpolator extends Interpolator {
                     a.getValue().zooms,
                     b.getValue().zooms,
                     (newX - a.getKey()) / duration,
-                    slope1, slope2, 0.5,0.5
+                    slope1, slope2, 0.5, 0.5
             );
-        }
-        else return b.getValue().zooms + newX;
+        } else return b.getValue().zooms + newX;
     }
 
     @Override
@@ -92,21 +94,21 @@ public class SlopeAccelInterpolator extends Interpolator {
 
         // Perform integration based on the sign of slopes
         if (reversedSign) {
+            double part1p = S / (k1);
+            double t = min(x, part1p);
+            integral += ((-k1 * (t * t)) / (2 * part1p) + k1 * t) * d;
+
+            double bottom = S / 4;
+            t = x;
+            integral += bottom * t * d;
+
             if (k2 == 0) {
-                double part1p = S / (k1 / 2);
-
-                double t = Math.min(x, part1p);
-                integral += (((-k1) * (t * t)) / (2 * part1p) + k1 * t) * d;
-
-            } else {
-                double part1p = S / k1;
-                double bottom = S / 2;
-
-                double t = Math.min(x, part1p);
-                integral += (((-k1) * (t * t)) / (2 * part1p) + k1 * t) * d;
-
-                t = x;
                 integral += bottom * t * d;
+            } else {
+                double part2p = S / (k2 * 2);
+                t = max(0, min(x - 1 + part2p, 1));
+
+                integral += d * t * k2 * t / (2 * part2p);
             }
         } else {
             double t = Math.min(x, a);
