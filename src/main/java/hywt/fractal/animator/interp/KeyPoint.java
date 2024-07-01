@@ -1,6 +1,7 @@
 package hywt.fractal.animator.interp;
 
 import java.util.Map;
+import java.util.Set;
 
 public class KeyPoint implements Comparable<KeyPoint> {
     private Map<String, Double> data;
@@ -31,5 +32,9 @@ public class KeyPoint implements Comparable<KeyPoint> {
         StringBuilder builder = new StringBuilder("[" + data.get("time") + "] ");
         data.forEach((k, v) -> builder.append(k).append(": ").append(v).append(" | "));
         return builder.toString();
+    }
+
+    public Set<Map.Entry<String, Double>> getData() {
+        return data.entrySet();
     }
 }

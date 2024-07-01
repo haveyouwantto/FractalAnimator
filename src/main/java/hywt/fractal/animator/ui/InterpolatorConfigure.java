@@ -33,8 +33,8 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
         editPanel.add(inputPanel);
 
-        addField("time", "Time",0);
-        addField("frame", "Frame",0);
+        addField("time", "Time", 0);
+        addField("frame", "Frame", 0);
 
         pointList = new ArrayList<>();
 
@@ -87,8 +87,10 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if(e.getClickCount()==2){
-
+                if (e.getClickCount() == 2) {
+                    for (Map.Entry<String, Double> data : pointJList.getSelectedValue().getData()) {
+                        setField(data.getKey(), data.getValue().toString());
+                    }
                 }
             }
         });
@@ -117,6 +119,10 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
 
     protected String getField(String key) {
         return extraFields.get(key).field.getText();
+    }
+
+    protected void setField(String key, String value) {
+        extraFields.get(key).field.setText(value);
     }
 
     protected void addDefault() {
