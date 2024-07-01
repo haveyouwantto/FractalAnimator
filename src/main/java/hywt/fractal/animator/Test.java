@@ -1,5 +1,6 @@
 package hywt.fractal.animator;
 
+import hywt.fractal.animator.indicator.KFScaleIndicator;
 import hywt.fractal.animator.interp.AccelInterpolator;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.RenderParams;

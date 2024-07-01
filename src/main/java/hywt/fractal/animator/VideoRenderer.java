@@ -1,5 +1,6 @@
 package hywt.fractal.animator;
 
+import hywt.fractal.animator.indicator.ScaleIndicator;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.RenderParams;
 import hywt.fractal.animator.keyframe.FractalFrame;

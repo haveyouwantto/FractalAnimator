@@ -1,6 +1,10 @@
 package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.*;
+import hywt.fractal.animator.indicator.FXScaleIndicator;
+import hywt.fractal.animator.indicator.KFScaleIndicator;
+import hywt.fractal.animator.indicator.OdometerIndicator;
+import hywt.fractal.animator.indicator.ScaleIndicator;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.RenderParams;
 import hywt.fractal.animator.keyframe.KeyframeLoader;
@@ -209,7 +213,7 @@ public class GUI extends JFrame implements Exportable {
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.addChoosableFileFilter(new FileNameExtensionFilter("Fractal Animator Project (.fap)", "fap"));
 
-            int result = chooser.showSaveDialog(genBtn);
+            int result = chooser.showSaveDialog(filesButton);
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = chooser.getSelectedFile();
@@ -233,7 +237,7 @@ public class GUI extends JFrame implements Exportable {
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.addChoosableFileFilter(new FileNameExtensionFilter("Fractal Animator Project (.fap)", "fap"));
 
-            int result = chooser.showSaveDialog(genBtn);
+            int result = chooser.showSaveDialog(filesButton);
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = chooser.getSelectedFile();
@@ -282,8 +286,10 @@ public class GUI extends JFrame implements Exportable {
             int choice = JOptionPane.showConfirmDialog(this, message, "Warning", JOptionPane.OK_CANCEL_OPTION);
             if (choice != JOptionPane.YES_OPTION) return;
         }
-        for (Class<? extends ScaleIndicator> indicator : indicators) {
-            renderer.addScaleIndicator(indicator.getDeclaredConstructor().newInstance());
+        for (Class<? extends ScaleIndicator> indicatorClass : indicators) {
+            ScaleIndicator indicator = indicatorClass.getDeclaredConstructor().newInstance();
+            indicator.setFont(indiPanel.getSelectedFont());
+            renderer.addScaleIndicator(indicator);
         }
 
         JFileChooser chooser = new JFileChooser();

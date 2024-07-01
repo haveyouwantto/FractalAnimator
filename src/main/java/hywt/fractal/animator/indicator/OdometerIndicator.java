@@ -1,10 +1,9 @@
-package hywt.fractal.animator;
+package hywt.fractal.animator.indicator;
 
 import hywt.fractal.animator.keyframe.FractalScale;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 public class OdometerIndicator implements ScaleIndicator {
@@ -28,8 +27,7 @@ public class OdometerIndicator implements ScaleIndicator {
         image = new BufferedImage((int) (SCALE * scale / 2 * DIGITS + MARGIN * scale * (DIGITS + 1)), (int) (SCALE * scale), BufferedImage.TYPE_3BYTE_BGR);
         g = image.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Font font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()).deriveFont((float) (SCALE * scale));
-        g.setFont(font);
+        setFont(Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()).deriveFont((float) (SCALE * scale)));
     }
 
     @Override
@@ -79,6 +77,11 @@ public class OdometerIndicator implements ScaleIndicator {
     public void setScale(double scale) throws IOException, FontFormatException {
         this.scale = scale;
         initializeCanvas();
+    }
+
+    @Override
+    public void setFont(Font font) {
+        g.setFont(font);
     }
 
 }

@@ -1,9 +1,8 @@
-package hywt.fractal.animator;
+package hywt.fractal.animator.indicator;
 
 import hywt.fractal.animator.keyframe.FractalScale;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
 public class KFScaleIndicator implements ScaleIndicator {
@@ -31,5 +30,10 @@ public class KFScaleIndicator implements ScaleIndicator {
     @Override
     public void setScale(double scale) {
         this.scale = scale;
+    }
+
+    @Override
+    public void setFont(Font font) {
+        this.font = font;
     }
 }

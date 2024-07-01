@@ -1,7 +1,7 @@
 package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.Exportable;
-import hywt.fractal.animator.ScaleIndicator;
+import hywt.fractal.animator.indicator.ScaleIndicator;
 import hywt.fractal.animator.Utils;
 import org.json.JSONObject;
 
@@ -11,10 +11,13 @@ import java.util.*;
 import java.util.List;
 
 public class IndicatorSelectorPanel extends JPanel implements Exportable {
+    private final JLabel fontName;
+    private final FontChooser fontChooser;
     Map<Class<? extends ScaleIndicator>, JCheckBox> checkBoxMap;
 
     public IndicatorSelectorPanel(Class<? extends ScaleIndicator>[] indicatorClasses) {
         checkBoxMap = new HashMap<>();
+        fontChooser = new FontChooser();
 
         boolean set = false;
         for (Class<? extends ScaleIndicator> indicatorClass : indicatorClasses) {
@@ -35,6 +38,18 @@ public class IndicatorSelectorPanel extends JPanel implements Exportable {
             add(indItem);
             checkBoxMap.put(indicatorClass, checkBox);
         }
+
+        fontName = new JLabel("Internal font");
+        JButton fontSelector = new JButton("Choose font");
+        fontSelector.addActionListener(e -> {
+            fontChooser.setVisible(true);
+        });
+
+        JPanel fontPanel = new JPanel();
+        fontPanel.add(fontName);
+        fontPanel.add(fontSelector);
+
+        add(fontPanel, BorderLayout.SOUTH);
     }
 
     public List<Class<? extends ScaleIndicator>> getSelected() {
@@ -51,6 +66,7 @@ public class IndicatorSelectorPanel extends JPanel implements Exportable {
         for (Class<? extends ScaleIndicator> selected : getSelected()) {
             obj.append("selected", selected.getCanonicalName());
         }
+        obj.put("font", fontChooser.exportJSON());
         return obj;
     }
 
@@ -68,5 +84,11 @@ public class IndicatorSelectorPanel extends JPanel implements Exportable {
             } catch (ClassNotFoundException ignored) {
             }
         }
+
+        fontChooser.importJSON(obj.getJSONObject("font"));
+    }
+
+    public Font getSelectedFont() {
+        return fontChooser.getSelectedFont();
     }
 }
