@@ -14,6 +14,7 @@ public class BinaryPanel extends JPanel {
     }
 
     public void addRight(Component c) {
-        add(c, BorderLayout.EAST);
+        add(c, BorderLayout.CENTER);
     }
+
 }

@@ -51,52 +51,6 @@ public class GUI extends JFrame {
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
         getContentPane().add(bottomPanel, BorderLayout.SOUTH);
 
-        JPanel genOptionsPanel = new JPanel();
-
-        JLabel mergeLabel = new JLabel("Merge Frames:");
-        mergeSpinner = new JSpinner();
-        mergeSpinner.setValue(4);
-        genOptionsPanel.add(mergeLabel);
-        genOptionsPanel.add(mergeSpinner);
-
-        JLabel widthLabel = new JLabel("Width: ");
-        widthSpinner = new JSpinner();
-        widthSpinner.setValue(1920);
-
-        genOptionsPanel.add(widthLabel);
-        genOptionsPanel.add(widthSpinner);
-
-        JLabel heightLabel = new JLabel("Height: ");
-        heightSpinner = new JSpinner();
-        heightSpinner.setValue(1080);
-
-        genOptionsPanel.add(heightLabel);
-        genOptionsPanel.add(heightSpinner);
-
-        JLabel fpsLabel = new JLabel("FPS: ");
-        fpsSpinner = new JSpinner();
-        fpsSpinner.setValue(60);
-
-        genOptionsPanel.add(fpsLabel);
-        genOptionsPanel.add(fpsSpinner);
-
-        JLabel ffmpegLabel = new JLabel("FFmpeg: ");
-        ffmpegCmd = new JTextField("ffmpeg");
-
-        genOptionsPanel.add(ffmpegLabel);
-        genOptionsPanel.add(ffmpegCmd);
-
-        JLabel paramLabel = new JLabel("Encoder: ");
-
-        paramJComboBox = new JComboBox<>();
-        Arrays.stream(EncodingParam.values()).forEach(paramJComboBox::addItem);
-
-        genOptionsPanel.add(paramLabel);
-        genOptionsPanel.add(paramJComboBox);
-
-
-        bottomPanel.add(genOptionsPanel);
-
         progressPanel = new ProgressPanel();
         bottomPanel.add(progressPanel);
 
@@ -110,7 +64,7 @@ public class GUI extends JFrame {
         inputPanel.setLayout(new BorderLayout());
         controls.add(inputPanel);
 
-        JLabel frameNum = new JLabel("-");
+        JLabel frameNum = new JLabel("Empty");
         inputPanel.add(frameNum, BorderLayout.SOUTH);
 
         JComboBox<Class<? extends ManagerConfigure>> importerSelect = new JComboBox<>();
@@ -130,7 +84,7 @@ public class GUI extends JFrame {
                     frameNum.setText("Found " + managerConfigure.get().size() + " frames");
                     return null;
                 });
-                frameNum.setText("-");
+                frameNum.setText("Empty");
                 managerConfigure.init();
 
                 inputPanel.add(managerConfigure, BorderLayout.CENTER);
@@ -200,7 +154,7 @@ public class GUI extends JFrame {
                 fb.setVisible(true);
             } catch (NullPointerException ex) {
                 showError("No keyframes selected.");
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 showError(ex);
             }
         });
@@ -209,8 +163,8 @@ public class GUI extends JFrame {
         genBtn = new JButton("Generate");
         genBtn.addActionListener(e -> {
             try {
-                if (managerConfigure.get() != null) {
-                    if(!this.rendering)
+                if (managerConfigure != null && managerConfigure.get() != null) {
+                    if (!this.rendering)
                         generate();
                     else
                         renderer.abort();
@@ -222,6 +176,65 @@ public class GUI extends JFrame {
             }
         });
         operationPanel.add(genBtn);
+
+        JScrollPane genOptionsScrollPane = new JScrollPane();
+
+        JPanel genOptionsPanel = new JPanel();
+
+        genOptionsScrollPane.getViewport().add(genOptionsPanel);
+        genOptionsScrollPane.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Video Options",
+                TitledBorder.CENTER, TitledBorder.TOP, null, null));
+
+        genOptionsPanel.setLayout(new BoxLayout(genOptionsPanel, BoxLayout.Y_AXIS));
+
+        BinaryPanel mergePanel = new BinaryPanel();
+        mergePanel.addLeft(new JLabel("Merge Frames:"));
+        mergeSpinner = new JSpinner();
+        mergeSpinner.setValue(4);
+        mergePanel.addRight(mergeSpinner);
+        genOptionsPanel.add(mergePanel);
+
+        // Width configuration
+        BinaryPanel widthPanel = new BinaryPanel();
+        widthPanel.addLeft(new JLabel("Width: "));
+        widthSpinner = new JSpinner();
+        widthSpinner.setValue(1920);
+        widthPanel.addRight(widthSpinner);
+        genOptionsPanel.add(widthPanel);
+
+        // Height configuration
+        BinaryPanel heightPanel = new BinaryPanel();
+        heightPanel.addLeft(new JLabel("Height: "));
+        heightSpinner = new JSpinner();
+        heightSpinner.setValue(1080);
+        heightPanel.addRight(heightSpinner);
+        genOptionsPanel.add(heightPanel);
+
+        // FPS configuration
+        BinaryPanel fpsPanel = new BinaryPanel();
+        fpsPanel.addLeft(new JLabel("FPS: "));
+        fpsSpinner = new JSpinner();
+        fpsSpinner.setValue(60);
+        fpsPanel.addRight(fpsSpinner);
+        genOptionsPanel.add(fpsPanel);
+
+        // FFmpeg configuration
+        BinaryPanel ffmpegPanel = new BinaryPanel();
+        ffmpegPanel.addLeft(new JLabel("FFmpeg: "));
+        ffmpegCmd = new JTextField("ffmpeg");
+        ffmpegPanel.addRight(ffmpegCmd);
+        genOptionsPanel.add(ffmpegPanel);
+
+        // Encoder configuration
+        BinaryPanel encoderPanel = new BinaryPanel();
+        encoderPanel.addLeft(new JLabel("Encoder: "));
+        paramJComboBox = new JComboBox<>();
+        Arrays.stream(EncodingParam.values()).forEach(paramJComboBox::addItem);
+        encoderPanel.addRight(paramJComboBox);
+        genOptionsPanel.add(encoderPanel);
+
+
+        controls.add(genOptionsScrollPane);
 
         pack();
     }
@@ -311,8 +324,7 @@ public class GUI extends JFrame {
         browseBtn.setEnabled(!rendering);
         if (rendering) {
             genBtn.setText("Abort");
-        }
-        else {
+        } else {
             genBtn.setText("Generate");
         }
     }

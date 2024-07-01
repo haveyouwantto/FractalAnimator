@@ -87,7 +87,9 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                System.out.println(e.getClickCount());
+                if(e.getClickCount()==2){
+
+                }
             }
         });
     }
@@ -126,8 +128,8 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
 
     static class LabeledField extends BinaryPanel {
 
-        private JLabel label;
-        private JTextField field;
+        private final JLabel label;
+        private final JTextField field;
 
         public LabeledField(String key) {
             super();

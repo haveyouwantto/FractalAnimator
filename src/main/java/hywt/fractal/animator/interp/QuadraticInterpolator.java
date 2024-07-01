@@ -1,8 +1,8 @@
 package hywt.fractal.animator.interp;
 
 public class QuadraticInterpolator extends Interpolator {
-    private double[] xValues;
-    private double[] yValues;
+    private final double[] xValues;
+    private final double[] yValues;
 
     public QuadraticInterpolator(double[] xValues, double[] yValues) {
         this.xValues = xValues;
