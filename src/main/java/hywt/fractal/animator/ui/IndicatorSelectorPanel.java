@@ -40,6 +40,7 @@ public class IndicatorSelectorPanel extends JPanel implements Exportable {
 
         JButton fontSelector = new JButton("Choose font");
         fontSelector.addActionListener(e -> {
+            fontChooser.setLocationRelativeTo(fontSelector);
             fontChooser.setVisible(true);
         });
 
