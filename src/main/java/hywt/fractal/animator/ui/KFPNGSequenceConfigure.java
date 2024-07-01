@@ -1,8 +1,9 @@
 package hywt.fractal.animator.ui;
 
-import hywt.fractal.animator.keyframe.FZKeyframeManager;
-import hywt.fractal.animator.keyframe.KFPNGKeyframeManager;
-import hywt.fractal.animator.keyframe.KeyframeManager;
+import hywt.fractal.animator.keyframe.FZKeyframeLoader;
+import hywt.fractal.animator.keyframe.KFPNGKeyframeLoader;
+import hywt.fractal.animator.keyframe.KeyframeLoader;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -10,12 +11,16 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class KFPNGSequenceConfigure extends  ManagerConfigure{private KeyframeManager manager;
+public class KFPNGSequenceConfigure extends ManagerConfigure{
+
+    private KeyframeLoader manager;
+    private JLabel label;
+    private File file;
 
     public void init() {
         setLayout(new BorderLayout());
 
-        JLabel label = new JLabel("Select a directory:");
+        label = new JLabel("Select a directory:");
 
 
         JTextArea prompt = new JTextArea();
@@ -38,9 +43,7 @@ public class KFPNGSequenceConfigure extends  ManagerConfigure{private KeyframeMa
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 try {
-                    manager = new KFPNGKeyframeManager(selectedFile);
-                    label.setText(selectedFile.getAbsolutePath());
-                    load();
+                    loadFile(selectedFile);
                 } catch (FileNotFoundException ex) {
                     JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (Exception ex) {
@@ -57,7 +60,30 @@ public class KFPNGSequenceConfigure extends  ManagerConfigure{private KeyframeMa
     }
 
     @Override
-    public KeyframeManager get() {
+    public KeyframeLoader get() {
         return manager;
+    }
+
+    private void loadFile(File selectedFile) throws Exception {
+        manager = new KFPNGKeyframeLoader(selectedFile);
+        label.setText(selectedFile.getAbsolutePath());
+        load();
+        file = selectedFile;
+    }
+
+    @Override
+    public JSONObject exportJSON() {
+        JSONObject object = new JSONObject();
+        object.put("path", file);
+        return object;
+    }
+
+    @Override
+    public void importJSON(JSONObject obj) {
+        try {
+            loadFile(new File(obj.getString("path")));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

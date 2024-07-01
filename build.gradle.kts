@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation("com.formdev:flatlaf:3.4.1")
+    implementation(files("lib/json.jar"))
 }
 
 tasks.jar {

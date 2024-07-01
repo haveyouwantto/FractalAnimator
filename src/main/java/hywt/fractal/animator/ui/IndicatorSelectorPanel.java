@@ -1,16 +1,16 @@
 package hywt.fractal.animator.ui;
 
+import hywt.fractal.animator.Exportable;
 import hywt.fractal.animator.ScaleIndicator;
 import hywt.fractal.animator.Utils;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
-public class IndicatorSelectorPanel extends JPanel {
+public class IndicatorSelectorPanel extends JPanel implements Exportable {
     Map<Class<? extends ScaleIndicator>, JCheckBox> checkBoxMap;
 
     public IndicatorSelectorPanel(Class<? extends ScaleIndicator>[] indicatorClasses) {
@@ -43,5 +43,30 @@ public class IndicatorSelectorPanel extends JPanel {
             if (entry.getValue().isSelected()) list.add(entry.getKey());
         }
         return list;
+    }
+
+    @Override
+    public JSONObject exportJSON() {
+        JSONObject obj = new JSONObject();
+        for (Class<? extends ScaleIndicator> selected : getSelected()) {
+            obj.append("selected", selected.getCanonicalName());
+        }
+        return obj;
+    }
+
+    @Override
+    public void importJSON(JSONObject obj) {
+        for (Map.Entry<Class<? extends ScaleIndicator>, JCheckBox> entry : checkBoxMap.entrySet()) {
+            entry.getValue().setSelected(false);
+        }
+
+        for (Object o : obj.getJSONArray("selected")) {
+            String className = (String) o;
+            try {
+                Class<?> item = Class.forName(className);
+                checkBoxMap.get(item).setSelected(true);
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
     }
 }

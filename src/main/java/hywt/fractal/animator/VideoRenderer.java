@@ -4,7 +4,7 @@ import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.RenderParams;
 import hywt.fractal.animator.keyframe.FractalFrame;
 import hywt.fractal.animator.keyframe.FractalScale;
-import hywt.fractal.animator.keyframe.KeyframeManager;
+import hywt.fractal.animator.keyframe.KeyframeLoader;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -60,7 +60,7 @@ public class VideoRenderer {
         this.mergeFrames = mergeFrames;
     }
 
-    public void ffmpegRender(KeyframeManager manager, RenderParams params, File file) throws Exception {
+    public void ffmpegRender(KeyframeLoader manager, RenderParams params, File file) throws Exception {
         this.width = params.width();
         this.height = params.height();
         this.fps = params.fps();

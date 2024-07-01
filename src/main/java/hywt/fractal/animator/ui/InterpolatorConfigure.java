@@ -2,6 +2,8 @@ package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.KeyPoint;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -145,5 +147,39 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
             addLeft(label);
             addRight(field);
         }
+    }
+
+    @Override
+    public JSONObject exportJSON() {
+        JSONObject obj = new JSONObject();
+
+        JSONArray array = new JSONArray();
+        for (KeyPoint keyPoint:pointList){
+            JSONObject keyPointObj = new JSONObject();
+            for (Map.Entry<String, Double> data : keyPoint.getData()) {
+                keyPointObj.put(data.getKey(),data.getValue());
+            }
+            array.put(keyPointObj);
+        }
+
+        obj.put("points", array);
+
+        return obj;
+    }
+
+    @Override
+    public void importJSON(JSONObject obj) {
+        pointList.clear();
+        JSONArray array = obj.getJSONArray("points");
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject keyPointObj = array.getJSONObject(i);
+            Map<String, Double> data = new HashMap<> ();
+            for (String key : keyPointObj.keySet()) {
+                data.put(key, keyPointObj.getDouble(key));
+            }
+            KeyPoint keyPoint = new KeyPoint(data);
+            pointList.add(keyPoint);
+        }
+        updateList();
     }
 }

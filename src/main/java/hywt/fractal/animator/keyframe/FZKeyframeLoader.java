@@ -6,10 +6,10 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 
-public class FZKeyframeManager extends KeyframeManager {
+public class FZKeyframeLoader extends KeyframeLoader {
     List<FractalFrame> frameList;
 
-    public FZKeyframeManager(File dir) throws FileNotFoundException {
+    public FZKeyframeLoader(File dir) throws FileNotFoundException {
         File[] files = dir.listFiles((dir1, name) -> name.matches(".+ \\((\\d+)\\)\\.(png|jpg|bmp)$"));
 
         if (files == null || files.length == 0) throw new FileNotFoundException("Directory invalid.");

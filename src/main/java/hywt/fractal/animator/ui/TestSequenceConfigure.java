@@ -1,22 +1,26 @@
 package hywt.fractal.animator.ui;
 
-import hywt.fractal.animator.keyframe.KeyframeManager;
-import hywt.fractal.animator.keyframe.TestKeyframeManager;
+import hywt.fractal.animator.keyframe.KeyframeLoader;
+import hywt.fractal.animator.keyframe.TestKeyframeLoader;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 
 public class TestSequenceConfigure extends ManagerConfigure {
-    private KeyframeManager manager;
+    private KeyframeLoader manager;
+    private JTextArea reField;
+    private JTextArea zoomField;
+    private JTextArea imField;
+    private JTextArea iterField;
+    private JButton button;
 
     public TestSequenceConfigure() {
     }
 
     @Override
-    public KeyframeManager get() {
+    public KeyframeLoader get() {
         return manager;
     }
 
@@ -31,22 +35,22 @@ public class TestSequenceConfigure extends ManagerConfigure {
         prompt.setEnabled(false);
 
         JLabel reLabel = new JLabel("Real");
-        JTextArea reField = new JTextArea("-1.99999911758766165543764649311537154663");
+        reField = new JTextArea("-1.99999911758766165543764649311537154663");
         reField.setLineWrap(true);
         JLabel imLabel = new JLabel("Imag");
-        JTextArea imField = new JTextArea("-4.2402439547240753390707694210131039e-13");
+        imField = new JTextArea("-4.2402439547240753390707694210131039e-13");
         imField.setLineWrap(true);
 
 
         JLabel zoomLabel = new JLabel("Zoom");
-        JTextArea zoomField = new JTextArea("5.070602e+30");
+        zoomField = new JTextArea("5.070602e+30");
         JLabel iterLabel = new JLabel("Iter");
-        JTextArea iterField = new JTextArea("1024");
+        iterField = new JTextArea("1024");
 
-        JButton button = new JButton("Set");
+        button = new JButton("Set");
         button.addActionListener(e -> {
                     try {
-                        manager = new TestKeyframeManager(
+                        manager = new TestKeyframeLoader(
                                 new BigDecimal(reField.getText()), new BigDecimal(imField.getText()), Double.parseDouble(zoomField.getText()), Integer.parseInt(iterField.getText()));
                         load();
                     } catch (Exception ex) {
@@ -75,5 +79,25 @@ public class TestSequenceConfigure extends ManagerConfigure {
         add(scrollPane, BorderLayout.CENTER);
 
 
+    }
+
+
+    @Override
+    public JSONObject exportJSON() {
+        JSONObject obj = new JSONObject();
+        obj.put("real", reField.getText());
+        obj.put("imag", imField.getText());
+        obj.put("zoom", Double.parseDouble(zoomField.getText()));
+        obj.put("iter", Integer.parseInt(iterField.getText()));
+        return obj;
+    }
+
+    @Override
+    public void importJSON(JSONObject obj) {
+        reField.setText(obj.getString("real"));
+        imField.setText(obj.getString("imag"));
+        zoomField.setText(String.valueOf(obj.getDouble("zoom")));
+        iterField.setText(String.valueOf(obj.getInt("iter")));
+        button.doClick();
     }
 }

@@ -1,18 +1,15 @@
 package hywt.fractal.animator.keyframe;
 
-import hywt.fractal.animator.Utils;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class KFPNGKeyframeManager extends KeyframeManager {
+public class KFPNGKeyframeLoader extends KeyframeLoader {
     List<FractalFrame> frameList;
 
-    public KFPNGKeyframeManager(File dir) throws FileNotFoundException {
+    public KFPNGKeyframeLoader(File dir) throws FileNotFoundException {
 
         File[] files = dir.listFiles((dir1, name) -> name.matches("\\d\\d\\d\\d\\d_([0-9e.]+)\\.png$"));
 

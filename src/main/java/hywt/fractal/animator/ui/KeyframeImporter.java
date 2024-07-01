@@ -1,9 +1,9 @@
 package hywt.fractal.animator.ui;
 
-import hywt.fractal.animator.keyframe.KeyframeManager;
+import hywt.fractal.animator.keyframe.KeyframeLoader;
 
 import javax.swing.*;
 
 public abstract class KeyframeImporter extends JPanel {
-    public abstract KeyframeManager getKeyframes();
+    public abstract KeyframeLoader getKeyframes();
 }

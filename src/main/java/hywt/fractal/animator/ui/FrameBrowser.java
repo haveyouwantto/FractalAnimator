@@ -1,7 +1,7 @@
 package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.keyframe.FractalScale;
-import hywt.fractal.animator.keyframe.KeyframeManager;
+import hywt.fractal.animator.keyframe.KeyframeLoader;
 import hywt.fractal.animator.keyframe.FractalFrame;
 
 import javax.swing.*;
@@ -14,12 +14,12 @@ import java.awt.image.BufferedImage;
 
 public class FrameBrowser extends JFrame {
     private final JSpinner spinner;
-    private KeyframeManager manager;
+    private KeyframeLoader manager;
     private JLabel infoLabel;
     private ImagePanel imgDisplay;
     private int ord;
 
-    public FrameBrowser(KeyframeManager manager) throws Exception {
+    public FrameBrowser(KeyframeLoader manager) throws Exception {
         this.manager = manager;
         this.ord = 0;
 

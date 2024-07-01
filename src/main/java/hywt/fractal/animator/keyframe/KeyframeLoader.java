@@ -2,7 +2,7 @@ package hywt.fractal.animator.keyframe;
 
 import java.util.Iterator;
 
-public abstract class KeyframeManager implements Iterable<FractalFrame> {
+public abstract class KeyframeLoader implements Iterable<FractalFrame> {
     public abstract FractalFrame get(int index);
 
     public abstract int size();

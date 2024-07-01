@@ -3,34 +3,36 @@ package hywt.fractal.animator.ui;
 import hywt.fractal.animator.*;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.RenderParams;
-import hywt.fractal.animator.keyframe.KeyframeManager;
+import hywt.fractal.animator.keyframe.KeyframeLoader;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.io.File;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class GUI extends JFrame {
+public class GUI extends JFrame implements Exportable {
 
     private final IndicatorSelectorPanel indiPanel;
     private final JButton browseBtn;
     private final JButton genBtn;
-    private final JSpinner widthSpinner;
-    private final JSpinner heightSpinner;
-    private final JSpinner fpsSpinner;
-    private final JTextField ffmpegCmd;
-    private final JSpinner mergeSpinner;
-    private final JComboBox<EncodingParam> paramJComboBox;
     private final ProgressPanel progressPanel;
-    private final JSpinner startTimeSpinner;
-    private final JSpinner endTimeSpinner;
-    private ManagerConfigure managerConfigure;
+    private final GenOptionsPanel genOptionsPanel;
+    private final JPanel interpPanel;
+    private final JComboBox<Class<? extends InterpolatorConfigure<?>>> interpSelect;
+    private final JPanel loaderPanel;
+    private final JComboBox<Class<? extends ManagerConfigure>> loaderSelect;
+    private final JLabel frameNum;
+    private ManagerConfigure loaderConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
 
     private boolean rendering;
@@ -60,39 +62,39 @@ public class GUI extends JFrame {
         JPanel operationPanel = new JPanel();
         bottomPanel.add(operationPanel);
 
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new CardLayout());
-        inputPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Image Sequence",
+        loaderPanel = new JPanel();
+        loaderPanel.setLayout(new CardLayout());
+        loaderPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Image Sequence",
                 TitledBorder.CENTER, TitledBorder.TOP, null, null));
-        inputPanel.setLayout(new BorderLayout());
-        controls.add(inputPanel);
+        loaderPanel.setLayout(new BorderLayout());
+        controls.add(loaderPanel);
 
-        JLabel frameNum = new JLabel("Empty");
-        inputPanel.add(frameNum, BorderLayout.SOUTH);
+        frameNum = new JLabel("Empty");
+        loaderPanel.add(frameNum, BorderLayout.SOUTH);
 
-        JComboBox<Class<? extends ManagerConfigure>> importerSelect = new JComboBox<>();
+        loaderSelect = new JComboBox<>();
 
-        importerSelect.addItem(FZSequenceConfigure.class);
-        importerSelect.addItem(TestSequenceConfigure.class);
-        importerSelect.addItem(KFPNGSequenceConfigure.class);
-        importerSelect.setRenderer(new ClassNameListRenderer());
-        importerSelect.addActionListener(e -> {
+        loaderSelect.addItem(FZSequenceConfigure.class);
+        loaderSelect.addItem(TestSequenceConfigure.class);
+        loaderSelect.addItem(KFPNGSequenceConfigure.class);
+        loaderSelect.setRenderer(new ClassNameListRenderer());
+        loaderSelect.addActionListener(e -> {
             try {
-                Component component = ((BorderLayout) inputPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+                Component component = ((BorderLayout) loaderPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
                 if (component != null) {
-                    inputPanel.remove(component);
+                    loaderPanel.remove(component);
                 }
-                managerConfigure = ((Class<? extends ManagerConfigure>) Objects.requireNonNull(importerSelect.getSelectedItem())).getDeclaredConstructor().newInstance();
-                managerConfigure.setOnLoadCallable(() -> {
-                    frameNum.setText("Found " + managerConfigure.get().size() + " frames");
+                loaderConfigure = ((Class<? extends ManagerConfigure>) Objects.requireNonNull(loaderSelect.getSelectedItem())).getDeclaredConstructor().newInstance();
+                loaderConfigure.setOnLoadCallable(() -> {
+                    frameNum.setText("Found " + loaderConfigure.get().size() + " frames");
                     return null;
                 });
                 frameNum.setText("Empty");
-                managerConfigure.init();
+                loaderConfigure.init();
 
-                inputPanel.add(managerConfigure, BorderLayout.CENTER);
-                inputPanel.revalidate();
-                inputPanel.repaint();
+                loaderPanel.add(loaderConfigure, BorderLayout.CENTER);
+                loaderPanel.revalidate();
+                loaderPanel.repaint();
             } catch (InstantiationException | InvocationTargetException | NoSuchMethodException |
                      IllegalAccessException ex) {
                 showError(ex);
@@ -100,13 +102,13 @@ public class GUI extends JFrame {
                 throw new RuntimeException(ex);
             }
         });
-        inputPanel.add(importerSelect, BorderLayout.NORTH);
+        loaderPanel.add(loaderSelect, BorderLayout.NORTH);
 
 
-        JPanel interpPanel = new JPanel();
+        interpPanel = new JPanel();
         interpPanel.setLayout(new BorderLayout());
 
-        JComboBox<Class<? extends InterpolatorConfigure<?>>> interpSelect = new JComboBox<>();
+        interpSelect = new JComboBox<>();
 
         interpSelect.addItem(LinearInterpolatorConfigure.class);
         interpSelect.addItem(SlopeAccelInterpolatorConfigure.class);
@@ -152,7 +154,7 @@ public class GUI extends JFrame {
         browseBtn = new JButton("Browse");
         browseBtn.addActionListener(e -> {
             try {
-                FrameBrowser fb = new FrameBrowser(managerConfigure.get());
+                FrameBrowser fb = new FrameBrowser(loaderConfigure.get());
                 fb.setLocationRelativeTo(browseBtn);
                 fb.setVisible(true);
             } catch (NullPointerException ex) {
@@ -166,7 +168,7 @@ public class GUI extends JFrame {
         genBtn = new JButton("Generate");
         genBtn.addActionListener(e -> {
             try {
-                if (managerConfigure != null && managerConfigure.get() != null) {
+                if (loaderConfigure != null && loaderConfigure.get() != null) {
                     if (!this.rendering)
                         generate();
                     else
@@ -180,80 +182,85 @@ public class GUI extends JFrame {
         });
         operationPanel.add(genBtn);
 
-        JScrollPane genOptionsScrollPane = new JScrollPane();
+        genOptionsPanel = new GenOptionsPanel();
+        controls.add(genOptionsPanel);
 
-        JPanel genOptionsPanel = new JPanel();
-
-        genOptionsScrollPane.getViewport().add(genOptionsPanel);
-        genOptionsScrollPane.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Video Options",
-                TitledBorder.CENTER, TitledBorder.TOP, null, null));
-
-        genOptionsPanel.setLayout(new BoxLayout(genOptionsPanel, BoxLayout.Y_AXIS));
-
-        // Width configuration
-        BinaryPanel widthPanel = new BinaryPanel();
-        widthPanel.addLeft(new JLabel("Width: "));
-        widthSpinner = new JSpinner();
-        widthSpinner.setValue(1920);
-        widthPanel.addRight(widthSpinner);
-        genOptionsPanel.add(widthPanel);
-
-        // Height configuration
-        BinaryPanel heightPanel = new BinaryPanel();
-        heightPanel.addLeft(new JLabel("Height: "));
-        heightSpinner = new JSpinner();
-        heightSpinner.setValue(1080);
-        heightPanel.addRight(heightSpinner);
-        genOptionsPanel.add(heightPanel);
-
-        // FPS configuration
-        BinaryPanel fpsPanel = new BinaryPanel();
-        fpsPanel.addLeft(new JLabel("FPS: "));
-        fpsSpinner = new JSpinner();
-        fpsSpinner.setValue(60);
-        fpsPanel.addRight(fpsSpinner);
-        genOptionsPanel.add(fpsPanel);
+        JToolBar toolBar = new JToolBar();
+        getContentPane().add(toolBar, BorderLayout.NORTH);
 
 
-        BinaryPanel mergePanel = new BinaryPanel();
-        mergePanel.addLeft(new JLabel("Merge Frames:"));
-        mergeSpinner = new JSpinner();
-        mergeSpinner.setValue(4);
-        mergePanel.addRight(mergeSpinner);
-        genOptionsPanel.add(mergePanel);
+        // Create the Files button
+        JButton filesButton = new JButton("Files");
 
+        // Create the popup menu
+        JPopupMenu fileMenu = new JPopupMenu();
+        JMenuItem loadMenuItem = new JMenuItem("Load");
+        JMenuItem saveMenuItem = new JMenuItem("Save");
+        fileMenu.add(loadMenuItem);
+        fileMenu.add(saveMenuItem);
 
-        BinaryPanel startTimePanel = new BinaryPanel();
-        startTimePanel.addLeft(new JLabel("Start Time:"));
-        startTimeSpinner = new JSpinner();
-        startTimeSpinner.setValue(2);
-        startTimePanel.addRight(startTimeSpinner);
-        genOptionsPanel.add(startTimePanel);
+        // Add action listeners to the menu items
+        loadMenuItem.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+            chooser.setCurrentDirectory(new File("."));
+            chooser.setAcceptAllFileFilterUsed(false);
+            chooser.addChoosableFileFilter(new FileNameExtensionFilter("Fractal Animator Project (.fap)", "fap"));
 
-        BinaryPanel endTimePanel = new BinaryPanel();
-        endTimePanel.addLeft(new JLabel("End Time:"));
-        endTimeSpinner = new JSpinner();
-        endTimeSpinner.setValue(2);
-        endTimePanel.addRight(endTimeSpinner);
-        genOptionsPanel.add(endTimePanel);
+            int result = chooser.showSaveDialog(genBtn);
 
-        // FFmpeg configuration
-        BinaryPanel ffmpegPanel = new BinaryPanel();
-        ffmpegPanel.addLeft(new JLabel("FFmpeg: "));
-        ffmpegCmd = new JTextField("ffmpeg");
-        ffmpegPanel.addRight(ffmpegCmd);
-        genOptionsPanel.add(ffmpegPanel);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = chooser.getSelectedFile();
 
-        // Encoder configuration
-        BinaryPanel encoderPanel = new BinaryPanel();
-        encoderPanel.addLeft(new JLabel("Encoder: "));
-        paramJComboBox = new JComboBox<>();
-        Arrays.stream(EncodingParam.values()).forEach(paramJComboBox::addItem);
-        encoderPanel.addRight(paramJComboBox);
-        genOptionsPanel.add(encoderPanel);
+                try {
+                    DataInputStream inputStream = new DataInputStream(new FileInputStream(selectedFile));
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8).strip();
+                    System.out.println(content);
+                    importJSON(new JSONObject(content));
+                    inputStream.close();
+                } catch (IOException ex) {
+                    showError(ex);
+                }
+            }
+        });
 
+        saveMenuItem.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+            chooser.setCurrentDirectory(new File("."));
+            chooser.setAcceptAllFileFilterUsed(false);
+            chooser.addChoosableFileFilter(new FileNameExtensionFilter("Fractal Animator Project (.fap)", "fap"));
 
-        controls.add(genOptionsScrollPane);
+            int result = chooser.showSaveDialog(genBtn);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = chooser.getSelectedFile();
+                if (!selectedFile.getName().endsWith(".fap")) {
+                    selectedFile = new File(selectedFile.getAbsolutePath() + ".fap");
+                }
+
+                try {
+                    DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(selectedFile));
+                    outputStream.write(exportJSON().toString().getBytes(StandardCharsets.UTF_8));
+                    outputStream.close();
+                } catch (IOException ex) {
+                    showError(ex);
+                }
+            }
+        });
+
+        // Add a mouse listener to the Files button to show the popup menu
+        filesButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                fileMenu.show(e.getComponent(), filesButton.getX(), filesButton.getY() + filesButton.getHeight());
+            }
+        });
+
+        // Add the Files button to the toolbar
+        toolBar.add(filesButton);
 
         pack();
     }
@@ -261,7 +268,7 @@ public class GUI extends JFrame {
     public void generate() throws Exception {
         renderer = new VideoRenderer();
 
-        KeyframeManager manager = managerConfigure.get();
+        KeyframeLoader manager = loaderConfigure.get();
         Interpolator interpolator = interpConfigure.get();
 
         renderer.setInterpolator(interpolator);
@@ -279,15 +286,12 @@ public class GUI extends JFrame {
             renderer.addScaleIndicator(indicator.getDeclaredConstructor().newInstance());
         }
 
-        renderer.setMergeFrames((Integer) mergeSpinner.getValue());
-
-
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setDialogType(JFileChooser.SAVE_DIALOG);
         chooser.setCurrentDirectory(new File("."));
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter("MKV files", "mkv"));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("Matroska Video (.mkv)", "mkv"));
 
         int result = chooser.showSaveDialog(genBtn);
 
@@ -306,14 +310,14 @@ public class GUI extends JFrame {
                 new Thread(() -> {
                     try {
                         RenderParams params = new RenderParams(
-                                (Integer) widthSpinner.getValue(),
-                                (Integer) heightSpinner.getValue(),
-                                (Integer) fpsSpinner.getValue(),
-                                (Integer) mergeSpinner.getValue(),
-                                (Integer) startTimeSpinner.getValue(),
-                                (Integer) endTimeSpinner.getValue(),
-                                ffmpegCmd.getText(),
-                                ((EncodingParam) paramJComboBox.getSelectedItem())
+                                genOptionsPanel.getWidth(),
+                                genOptionsPanel.getHeight(),
+                                genOptionsPanel.getFPS(),
+                                genOptionsPanel.getMergeFrames(),
+                                genOptionsPanel.getStartTime(),
+                                genOptionsPanel.getEndTime(),
+                                genOptionsPanel.getFFmpegCommand(),
+                                genOptionsPanel.getSelectedParam()
                         );
                         renderer.ffmpegRender(manager, params, finalSelectedFile);
                         showInfo("Render completed.");
@@ -356,5 +360,84 @@ public class GUI extends JFrame {
         } else {
             genBtn.setText("Generate");
         }
+    }
+
+    @Override
+    public JSONObject exportJSON() {
+        JSONObject object = new JSONObject();
+        object.put("genOptions", genOptionsPanel.exportJSON());
+
+        if (loaderConfigure != null) {
+            JSONObject loader = new JSONObject();
+            loader.put("type", loaderConfigure.getClass().getCanonicalName());
+            loader.put("data", loaderConfigure.exportJSON());
+            object.put("loader", loader);
+        }
+
+        if (interpConfigure != null) {
+            JSONObject interp = new JSONObject();
+            interp.put("type", interpConfigure.getClass().getCanonicalName());
+            interp.put("data", interpConfigure.exportJSON());
+            object.put("interpolator", interp);
+        }
+
+        object.put("indicators", indiPanel.exportJSON());
+        return object;
+    }
+
+    @Override
+    public void importJSON(JSONObject obj) {
+        genOptionsPanel.importJSON(obj.getJSONObject("genOptions"));
+
+        try {
+            JSONObject loader = obj.getJSONObject("loader");
+            Class<?> c = Class.forName(loader.getString("type"));
+            loaderSelect.setSelectedItem(c);
+            Component component = ((BorderLayout) loaderPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+            if (component != null) {
+                loaderPanel.remove(component);
+            }
+            loaderConfigure = (ManagerConfigure) c.getDeclaredConstructor().newInstance();
+            loaderConfigure.setOnLoadCallable(() -> {
+                frameNum.setText("Found " + loaderConfigure.get().size() + " frames");
+                return null;
+            });
+            loaderConfigure.init();
+            loaderConfigure.importJSON(loader.getJSONObject("data"));
+
+            loaderPanel.add(loaderConfigure, BorderLayout.CENTER);
+            loaderPanel.revalidate();
+            loaderPanel.repaint();
+        } catch (Exception e) {
+            showError(e);
+        }
+
+        try {
+            JSONObject interp = obj.getJSONObject("interpolator");
+            Class<?> c = Class.forName(interp.getString("type"));
+            interpSelect.setSelectedItem(c);
+            interpConfigure = (OptionConfigure<Interpolator>) c.getDeclaredConstructor().newInstance();
+            System.out.println(interpConfigure);
+            interpConfigure.init();
+            interpConfigure.importJSON(interp.getJSONObject("data"));
+
+            Component component = ((BorderLayout) interpPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+            if (component != null) {
+                interpPanel.remove(component);
+            }
+
+            interpPanel.add(interpConfigure, BorderLayout.CENTER);
+            interpPanel.revalidate();
+            interpPanel.repaint();
+
+
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException |
+                 ClassNotFoundException e) {
+            showError(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        indiPanel.importJSON(obj.getJSONObject("indicators"));
     }
 }

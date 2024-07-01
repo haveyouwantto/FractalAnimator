@@ -1,10 +1,10 @@
 package hywt.fractal.animator.ui;
 
-import hywt.fractal.animator.keyframe.KeyframeManager;
+import hywt.fractal.animator.keyframe.KeyframeLoader;
 
 import java.util.concurrent.Callable;
 
-public abstract class ManagerConfigure extends OptionConfigure<KeyframeManager> {
+public abstract class ManagerConfigure extends OptionConfigure<KeyframeLoader> {
     private Callable<Void> callable;
 
     public void setOnLoadCallable(Callable<Void> callable) {

@@ -12,12 +12,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class TestKeyframeManager extends KeyframeManager {
+public class TestKeyframeLoader extends KeyframeLoader {
     private final List<TestFractalFrame> frames;
 
     private final ExecutorService service;
 
-    public TestKeyframeManager(BigDecimal re, BigDecimal im, double magn, int iterations) {
+    public TestKeyframeLoader(BigDecimal re, BigDecimal im, double magn, int iterations) {
         frames = new ArrayList<>();
         int processors = Runtime.getRuntime().availableProcessors();
         service = Executors.newFixedThreadPool(processors);
