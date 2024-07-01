@@ -1,14 +1,14 @@
 package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.keyframe.KeyframeLoader;
-import hywt.fractal.animator.keyframe.TestKeyframeLoader;
+import hywt.fractal.animator.keyframe.SimpleMandelbrotLoader;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 
-public class TestSequenceConfigure extends ManagerConfigure {
+public class SimpleMandelbrotConfigure extends ManagerConfigure {
     private KeyframeLoader manager;
     private JTextArea reField;
     private JTextArea zoomField;
@@ -16,7 +16,7 @@ public class TestSequenceConfigure extends ManagerConfigure {
     private JTextArea iterField;
     private JButton button;
 
-    public TestSequenceConfigure() {
+    public SimpleMandelbrotConfigure() {
     }
 
     @Override
@@ -50,7 +50,7 @@ public class TestSequenceConfigure extends ManagerConfigure {
         button = new JButton("Set");
         button.addActionListener(e -> {
                     try {
-                        manager = new TestKeyframeLoader(
+                        manager = new SimpleMandelbrotLoader(
                                 new BigDecimal(reField.getText()), new BigDecimal(imField.getText()), Double.parseDouble(zoomField.getText()), Integer.parseInt(iterField.getText()));
                         load();
                     } catch (Exception ex) {
