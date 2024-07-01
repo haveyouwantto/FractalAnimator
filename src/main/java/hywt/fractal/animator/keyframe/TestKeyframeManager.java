@@ -1,5 +1,7 @@
 package hywt.fractal.animator.keyframe;
 
+import hywt.fractal.animator.Palette;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -39,10 +41,6 @@ public class TestKeyframeManager extends KeyframeManager {
     }
 
     static class TestFractalFrame extends FractalFrame {
-
-        public static final int[] PALETTE = {16007990, 16733986, 16750592, 16761095, 16771899,
-                13491257, 9159498, 5025616, 38536, 48340, 240116, 2201331, 4149685,
-                6765239, 10233776, 15277667};
 
         final BigDecimal re;
         final BigDecimal im;
@@ -193,7 +191,7 @@ public class TestKeyframeManager extends KeyframeManager {
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    image.setRGB(x, y, (map[y][x] >= 0 && map[y][x] < iterations) ? PALETTE[map[y][x] % PALETTE.length] : 0);
+                    image.setRGB(x, y, (map[y][x] >= 0 && map[y][x] < iterations) ? Palette.getColor(map[y][x]) : 0);
                 }
             }
             if (glitches.size() > 4 && refs < 70) {
