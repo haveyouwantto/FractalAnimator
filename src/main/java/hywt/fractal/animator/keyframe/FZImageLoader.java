@@ -6,10 +6,10 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 
-public class FZKeyframeLoader extends KeyframeLoader {
-    List<FractalFrame> frameList;
+public class FZImageLoader extends ImageLoader {
+    List<FractalImage> frameList;
 
-    public FZKeyframeLoader(File dir) throws FileNotFoundException {
+    public FZImageLoader(File dir) throws FileNotFoundException {
         File[] files = dir.listFiles((dir1, name) -> name.matches(".+ \\((\\d+)\\)\\.(png|jpg|bmp)$"));
 
         if (files == null || files.length == 0) throw new FileNotFoundException("Directory invalid.");
@@ -22,7 +22,7 @@ public class FZKeyframeLoader extends KeyframeLoader {
             try (Scanner sc = new Scanner(new FileInputStream(info))) {
                 String size = sc.nextLine().split(":")[1].strip();
 
-                frameList.add(new ImageFileFractalFrame(file, FractalScale.fromSize(size)));
+                frameList.add(new ImageFileFractalImage(file, FractalScale.fromSize(size)));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -32,7 +32,7 @@ public class FZKeyframeLoader extends KeyframeLoader {
     }
 
     @Override
-    public FractalFrame get(int index) {
+    public FractalImage get(int index) {
         try {
             return frameList.get(index);
         } catch (IndexOutOfBoundsException e) {
@@ -46,8 +46,8 @@ public class FZKeyframeLoader extends KeyframeLoader {
     }
 
     @Override
-    public Iterator<FractalFrame> iterator() {
-        return new Iterator<FractalFrame>() {
+    public Iterator<FractalImage> iterator() {
+        return new Iterator<FractalImage>() {
             int index = 0;
 
             @Override
@@ -56,7 +56,7 @@ public class FZKeyframeLoader extends KeyframeLoader {
             }
 
             @Override
-            public FractalFrame next() {
+            public FractalImage next() {
                 return frameList.get(index++);
             }
         };

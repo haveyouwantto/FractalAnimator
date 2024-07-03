@@ -3,7 +3,7 @@ package hywt.fractal.animator.keyframe;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 
-public abstract class FractalFrame implements Comparable<FractalFrame>, Closeable {
+public abstract class FractalImage implements Comparable<FractalImage>, Closeable {
     FractalScale scale;
 
     public FractalScale getScale() {
@@ -11,7 +11,7 @@ public abstract class FractalFrame implements Comparable<FractalFrame>, Closeabl
     }
 
     @Override
-    public int compareTo(FractalFrame o) {
+    public int compareTo(FractalImage o) {
         return Double.compare(scale.getZooms(), o.scale.getZooms());
     }
 

@@ -1,8 +1,7 @@
 package hywt.fractal.animator.ui;
 
-import hywt.fractal.animator.keyframe.FZKeyframeLoader;
-import hywt.fractal.animator.keyframe.KFPNGKeyframeLoader;
-import hywt.fractal.animator.keyframe.KeyframeLoader;
+import hywt.fractal.animator.keyframe.KFPNGImageLoader;
+import hywt.fractal.animator.keyframe.ImageLoader;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -11,9 +10,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class KFPNGSequenceConfigure extends ManagerConfigure{
+public class KFImageLoaderConfigure extends ImageLoaderConfigure {
 
-    private KeyframeLoader manager;
+    private ImageLoader manager;
     private JLabel label;
     private File file;
 
@@ -60,12 +59,12 @@ public class KFPNGSequenceConfigure extends ManagerConfigure{
     }
 
     @Override
-    public KeyframeLoader get() {
+    public ImageLoader get() {
         return manager;
     }
 
     private void loadFile(File selectedFile) throws Exception {
-        manager = new KFPNGKeyframeLoader(selectedFile);
+        manager = new KFPNGImageLoader(selectedFile);
         label.setText(selectedFile.getAbsolutePath());
         load();
         file = selectedFile;

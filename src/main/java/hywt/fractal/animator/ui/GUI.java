@@ -7,7 +7,7 @@ import hywt.fractal.animator.indicator.OdometerIndicator;
 import hywt.fractal.animator.indicator.ScaleIndicator;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.RenderParams;
-import hywt.fractal.animator.keyframe.KeyframeLoader;
+import hywt.fractal.animator.keyframe.ImageLoader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,9 +35,9 @@ public class GUI extends JFrame implements Exportable {
     private final JPanel interpPanel;
     private final JComboBox<Class<? extends InterpolatorConfigure<?>>> interpSelect;
     private final JPanel loaderPanel;
-    private final JComboBox<Class<? extends ManagerConfigure>> loaderSelect;
+    private final JComboBox<Class<? extends ImageLoaderConfigure>> loaderSelect;
     private final JLabel frameNum;
-    private ManagerConfigure loaderConfigure;
+    private ImageLoaderConfigure loaderConfigure;
     private OptionConfigure<Interpolator> interpConfigure;
 
     private boolean rendering;
@@ -69,7 +69,7 @@ public class GUI extends JFrame implements Exportable {
 
         loaderPanel = new JPanel();
         loaderPanel.setLayout(new CardLayout());
-        loaderPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Image Sequence",
+        loaderPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Image Loader",
                 TitledBorder.CENTER, TitledBorder.TOP, null, null));
         loaderPanel.setLayout(new BorderLayout());
         controls.add(loaderPanel);
@@ -79,9 +79,9 @@ public class GUI extends JFrame implements Exportable {
 
         loaderSelect = new JComboBox<>();
 
-        loaderSelect.addItem(FZSequenceConfigure.class);
-        loaderSelect.addItem(SimpleMandelbrotConfigure.class);
-        loaderSelect.addItem(KFPNGSequenceConfigure.class);
+        loaderSelect.addItem(FZImageLoaderConfigure.class);
+        loaderSelect.addItem(SimpleMandelbrotLoaderConfigure.class);
+        loaderSelect.addItem(KFImageLoaderConfigure.class);
         loaderSelect.setRenderer(new ClassNameListRenderer());
         loaderSelect.addActionListener(e -> {
             try {
@@ -89,9 +89,9 @@ public class GUI extends JFrame implements Exportable {
                 if (component != null) {
                     loaderPanel.remove(component);
                 }
-                loaderConfigure = ((Class<? extends ManagerConfigure>) Objects.requireNonNull(loaderSelect.getSelectedItem())).getDeclaredConstructor().newInstance();
+                loaderConfigure = ((Class<? extends ImageLoaderConfigure>) Objects.requireNonNull(loaderSelect.getSelectedItem())).getDeclaredConstructor().newInstance();
                 loaderConfigure.setOnLoadCallable(() -> {
-                    frameNum.setText("Found " + loaderConfigure.get().size() + " frames");
+                    frameNum.setText("Found " + loaderConfigure.get().size() + " images");
                     return null;
                 });
                 frameNum.setText("Empty");
@@ -159,11 +159,11 @@ public class GUI extends JFrame implements Exportable {
         browseBtn = new JButton("Browse");
         browseBtn.addActionListener(e -> {
             try {
-                FrameBrowser fb = new FrameBrowser(loaderConfigure.get());
+                ImageBrowser fb = new ImageBrowser(loaderConfigure.get());
                 fb.setLocationRelativeTo(browseBtn);
                 fb.setVisible(true);
             } catch (NullPointerException ex) {
-                showError("No keyframes selected.");
+                showError("Missing images.");
             } catch (Exception ex) {
                 showError(ex);
             }
@@ -179,7 +179,7 @@ public class GUI extends JFrame implements Exportable {
                     else
                         renderer.abort();
                 } else {
-                    showError("Missing image sequence");
+                    showError("Missing images.");
                 }
             } catch (Exception ex) {
                 showError(ex);
@@ -272,7 +272,7 @@ public class GUI extends JFrame implements Exportable {
     public void generate() throws Exception {
         renderer = new VideoRenderer();
 
-        KeyframeLoader manager = loaderConfigure.get();
+        ImageLoader manager = loaderConfigure.get();
         Interpolator interpolator = interpConfigure.get();
 
         renderer.setInterpolator(interpolator);
@@ -319,7 +319,7 @@ public class GUI extends JFrame implements Exportable {
                                 genOptionsPanel.getWidth(),
                                 genOptionsPanel.getHeight(),
                                 genOptionsPanel.getFPS(),
-                                genOptionsPanel.getMergeFrames(),
+                                genOptionsPanel.getImageBlending(),
                                 genOptionsPanel.getStartTime(),
                                 genOptionsPanel.getEndTime(),
                                 genOptionsPanel.getFFmpegCommand(),
@@ -403,9 +403,9 @@ public class GUI extends JFrame implements Exportable {
             JSONObject loader = obj.getJSONObject("loader");
             Class<?> c = Class.forName(loader.getString("type"));
             loaderSelect.setSelectedItem(c);
-            loaderConfigure = (ManagerConfigure) c.getDeclaredConstructor().newInstance();
+            loaderConfigure = (ImageLoaderConfigure) c.getDeclaredConstructor().newInstance();
             loaderConfigure.setOnLoadCallable(() -> {
-                frameNum.setText("Found " + loaderConfigure.get().size() + " frames");
+                frameNum.setText("Found " + loaderConfigure.get().size() + " images");
                 return null;
             });
             loaderConfigure.init();

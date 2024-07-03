@@ -1,7 +1,7 @@
 package hywt.fractal.animator.ui;
 
-import hywt.fractal.animator.keyframe.FZKeyframeLoader;
-import hywt.fractal.animator.keyframe.KeyframeLoader;
+import hywt.fractal.animator.keyframe.FZImageLoader;
+import hywt.fractal.animator.keyframe.ImageLoader;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -10,8 +10,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class FZSequenceConfigure extends ManagerConfigure {
-    private KeyframeLoader manager;
+public class FZImageLoaderConfigure extends ImageLoaderConfigure {
+    private ImageLoader manager;
     private JLabel label;
     private File file;
 
@@ -58,12 +58,12 @@ public class FZSequenceConfigure extends ManagerConfigure {
     }
 
     @Override
-    public KeyframeLoader get() {
+    public ImageLoader get() {
         return manager;
     }
 
     private void loadFile(File selectedFile) throws Exception {
-        manager = new FZKeyframeLoader(selectedFile);
+        manager = new FZImageLoader(selectedFile);
         label.setText(selectedFile.getAbsolutePath());
         load();
         file = selectedFile;

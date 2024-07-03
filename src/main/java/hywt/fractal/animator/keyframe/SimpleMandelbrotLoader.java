@@ -12,8 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class SimpleMandelbrotLoader extends KeyframeLoader {
-    private final List<TestFractalFrame> frames;
+public class SimpleMandelbrotLoader extends ImageLoader {
+    private final List<TestFractalImage> frames;
 
     private final ExecutorService service;
 
@@ -22,12 +22,12 @@ public class SimpleMandelbrotLoader extends KeyframeLoader {
         int processors = Runtime.getRuntime().availableProcessors();
         service = Executors.newFixedThreadPool(processors);
         for (int i = -1; Math.pow(2, i) <= magn; i++) {
-            frames.add(new TestFractalFrame(re, im, Math.pow(2, i), iterations, service));
+            frames.add(new TestFractalImage(re, im, Math.pow(2, i), iterations, service));
         }
     }
 
     @Override
-    public FractalFrame get(int index) {
+    public FractalImage get(int index) {
         try {
             return frames.get(index);
         } catch (IndexOutOfBoundsException e) {
@@ -40,7 +40,7 @@ public class SimpleMandelbrotLoader extends KeyframeLoader {
         return frames.size();
     }
 
-    static class TestFractalFrame extends FractalFrame {
+    static class TestFractalImage extends FractalImage {
 
         final BigDecimal re;
         final BigDecimal im;
@@ -62,7 +62,7 @@ public class SimpleMandelbrotLoader extends KeyframeLoader {
 
         private ExecutorService service;
 
-        public TestFractalFrame(BigDecimal re, BigDecimal im, double magn, int iterations, ExecutorService service) {
+        public TestFractalImage(BigDecimal re, BigDecimal im, double magn, int iterations, ExecutorService service) {
             this.scale = new FractalScale(Math.log(magn) / Math.log(2));
             this.size = 4 / magn;
             width = 1000;

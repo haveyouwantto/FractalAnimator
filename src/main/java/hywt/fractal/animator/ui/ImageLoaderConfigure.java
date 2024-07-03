@@ -1,10 +1,10 @@
 package hywt.fractal.animator.ui;
 
-import hywt.fractal.animator.keyframe.KeyframeLoader;
+import hywt.fractal.animator.keyframe.ImageLoader;
 
 import java.util.concurrent.Callable;
 
-public abstract class ManagerConfigure extends OptionConfigure<KeyframeLoader> {
+public abstract class ImageLoaderConfigure extends OptionConfigure<ImageLoader> {
     private Callable<Void> callable;
 
     public void setOnLoadCallable(Callable<Void> callable) {

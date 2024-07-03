@@ -12,7 +12,7 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
     private final JSpinner widthSpinner;
     private final JSpinner heightSpinner;
     private final JSpinner fpsSpinner;
-    private final JSpinner mergeSpinner;
+    private final JSpinner blendingSpinner;
     private final JSpinner startTimeSpinner;
     private final JSpinner endTimeSpinner;
     private final JTextField ffmpegCmd;
@@ -54,12 +54,12 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
         genOptionsPanel.add(fpsPanel);
 
 
-        BinaryPanel mergePanel = new BinaryPanel();
-        mergePanel.addLeft(new JLabel("Merge Frames:"));
-        mergeSpinner = new JSpinner();
-        mergeSpinner.setValue(4);
-        mergePanel.addRight(mergeSpinner);
-        genOptionsPanel.add(mergePanel);
+        BinaryPanel blendingPanel = new BinaryPanel();
+        blendingPanel.addLeft(new JLabel("Image Blending:"));
+        blendingSpinner = new JSpinner();
+        blendingSpinner.setValue(4);
+        blendingPanel.addRight(blendingSpinner);
+        genOptionsPanel.add(blendingPanel);
 
 
         BinaryPanel startTimePanel = new BinaryPanel();
@@ -105,8 +105,8 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
         return (Integer) fpsSpinner.getValue();
     }
 
-    public int getMergeFrames() {
-        return (Integer) mergeSpinner.getValue();
+    public int getImageBlending() {
+        return (Integer) blendingSpinner.getValue();
     }
 
     public int getStartTime() {
@@ -133,7 +133,7 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
         obj.put("width", getWidth());
         obj.put("height", getHeight());
         obj.put("fps", getFPS());
-        obj.put("mergeFrames", getMergeFrames());
+        obj.put("imageBlending", getImageBlending());
         obj.put("startTime", getStartTime());
         obj.put("endTime", getEndTime());
         obj.put("ffmpegCmd", getFFmpegCommand());
@@ -152,8 +152,8 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
         if (obj.has("fps")) {
             fpsSpinner.setValue(obj.getInt("fps"));
         }
-        if (obj.has("mergeFrames")) {
-            mergeSpinner.setValue(obj.getInt("mergeFrames"));
+        if (obj.has("imageBlending")) {
+            blendingSpinner.setValue(obj.getInt("imageBlending"));
         }
         if (obj.has("startTime")) {
             startTimeSpinner.setValue(obj.getInt("startTime"));

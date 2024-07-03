@@ -2,21 +2,21 @@ package hywt.fractal.animator.keyframe;
 
 import java.util.Iterator;
 
-public abstract class KeyframeLoader implements Iterable<FractalFrame> {
-    public abstract FractalFrame get(int index);
+public abstract class ImageLoader implements Iterable<FractalImage> {
+    public abstract FractalImage get(int index);
 
     public abstract int size();
 
-    public FractalFrame getFrameAtZoom(double zoom) {
+    public FractalImage getFrameAtZoom(double zoom) {
         for (int i = 0; i < size(); i++) {
-            FractalFrame frame = get(i);
+            FractalImage frame = get(i);
             if (frame.getScale().getZooms() > zoom) return get(i - 1);
         }
         return get(size() - 1);
     }
 
     @Override
-    public Iterator<FractalFrame> iterator() {
+    public Iterator<FractalImage> iterator() {
         return new Iterator<>() {
             int index = 0;
 
@@ -26,17 +26,17 @@ public abstract class KeyframeLoader implements Iterable<FractalFrame> {
             }
 
             @Override
-            public FractalFrame next() {
+            public FractalImage next() {
                 return get(index++);
             }
         };
     }
 
-    public FractalFrame getFirst() {
+    public FractalImage getFirst() {
         return get(0);
     }
 
-    public FractalFrame getLast() {
+    public FractalImage getLast() {
         return get(size() - 1);
     }
 

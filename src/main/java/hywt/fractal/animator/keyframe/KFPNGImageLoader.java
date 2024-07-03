@@ -6,10 +6,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class KFPNGKeyframeLoader extends KeyframeLoader {
-    List<FractalFrame> frameList;
+public class KFPNGImageLoader extends ImageLoader {
+    List<FractalImage> frameList;
 
-    public KFPNGKeyframeLoader(File dir) throws FileNotFoundException {
+    public KFPNGImageLoader(File dir) throws FileNotFoundException {
 
         File[] files = dir.listFiles((dir1, name) -> name.matches("\\d\\d\\d\\d\\d_([0-9e.]+)\\.png$"));
 
@@ -21,14 +21,14 @@ public class KFPNGKeyframeLoader extends KeyframeLoader {
         Arrays.stream(files).forEach(file -> {
             Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find())
-                frameList.add(new ImageFileFractalFrame(file, FractalScale.fromMagnification(matcher.group(1))));
+                frameList.add(new ImageFileFractalImage(file, FractalScale.fromMagnification(matcher.group(1))));
         });
 
         Collections.sort(frameList);
     }
 
     @Override
-    public FractalFrame get(int index) {
+    public FractalImage get(int index) {
         try {
             return frameList.get(index);
         } catch (IndexOutOfBoundsException e) {

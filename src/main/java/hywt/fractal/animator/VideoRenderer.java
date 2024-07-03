@@ -3,9 +3,9 @@ package hywt.fractal.animator;
 import hywt.fractal.animator.indicator.ScaleIndicator;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.RenderParams;
-import hywt.fractal.animator.keyframe.FractalFrame;
+import hywt.fractal.animator.keyframe.FractalImage;
 import hywt.fractal.animator.keyframe.FractalScale;
-import hywt.fractal.animator.keyframe.KeyframeLoader;
+import hywt.fractal.animator.keyframe.ImageLoader;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -63,7 +63,7 @@ public class VideoRenderer {
         this.mergeFrames = mergeFrames;
     }
 
-    public void ffmpegRender(KeyframeLoader manager, RenderParams params, File file) throws Exception {
+    public void ffmpegRender(ImageLoader manager, RenderParams params, File file) throws Exception {
         this.width = params.width();
         this.height = params.height();
         this.fps = params.fps();
@@ -96,7 +96,7 @@ public class VideoRenderer {
             renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
         }
 
-        FractalFrame[] fractalFrames = new FractalFrame[mergeFrames];
+        FractalImage[] fractalImages = new FractalImage[mergeFrames];
 
         int frameNum = 0;
         double currentZoom;
@@ -104,7 +104,7 @@ public class VideoRenderer {
         DataOutputStream fos = new DataOutputStream(new FileOutputStream("timeline.bin"));
 
         for (int i = 0; i < manager.size(); i++) {
-            FractalFrame frame = manager.get(i);
+            FractalImage frame = manager.get(i);
             List<Double> scales = new ArrayList<>();
 
             while (true) {
@@ -120,14 +120,14 @@ public class VideoRenderer {
                 frameNum++;
             }
 
-            fractalFrames[0] = frame;
+            fractalImages[0] = frame;
             for (int j = 1; j < mergeFrames; j++) {
-                fractalFrames[j] = manager.get(i + j);
+                fractalImages[j] = manager.get(i + j);
             }
 
             if (!scales.isEmpty()) {
                 renderFrame(scales, process,
-                        fractalFrames
+                        fractalImages
                 );
             }
             renderedKeyframes = i + 1;
@@ -144,7 +144,7 @@ public class VideoRenderer {
         finished = true;
     }
 
-    private void renderFrame(List<Double> factors, FFmpegProcess process, FractalFrame... frames)
+    private void renderFrame(List<Double> factors, FFmpegProcess process, FractalImage... frames)
             throws Exception {
 
         List<Future<BufferedImage>> futures = new LinkedList<>();

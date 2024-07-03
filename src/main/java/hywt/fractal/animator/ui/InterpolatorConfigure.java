@@ -36,7 +36,7 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
         editPanel.add(inputPanel);
 
         addField("time", "Time", 0);
-        addField("frame", "Frame", 0);
+        addField("image", "Image", 0);
 
         pointList = new ArrayList<>();
 
