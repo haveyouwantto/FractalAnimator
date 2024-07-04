@@ -34,4 +34,13 @@ public class Utils {
 
         return output.toString();
     }
+
+    public static String formatSeconds(double seconds) {
+        if(Double.isInfinite(seconds)) return "\u221e";
+        int hours = (int) (seconds / 3600);
+        int minutes = (int) ((seconds % 3600) / 60);
+        int remainingSeconds = (int) (seconds % 60);
+
+        return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds);
+    }
 }
