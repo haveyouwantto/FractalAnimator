@@ -12,11 +12,9 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class FontChooser extends JFrame implements Exportable {
-    private final JButton cancel;
     private final JButton confirm;
     private final JList<String> fontList;
     private final JCheckBox checkBox;
-    private ActionListener cancelListener;
     private ActionListener confirmListener;
     private Font font;
 
@@ -69,9 +67,9 @@ public class FontChooser extends JFrame implements Exportable {
         previewPanel.setPreferredSize(new Dimension(getWidth(), 80));
 
         fontList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
+            if (!e.getValueIsAdjusting() && !fontList.isSelectionEmpty()) {
                 String fontName = fontList.getSelectedValue();
-                previewPanel.setFont(new Font(fontName, Font.PLAIN, 24));
+                previewPanel.setFont(new Font(fontName, Font.PLAIN, 20));
                 previewPanel.repaint();
             }
         });
@@ -94,7 +92,7 @@ public class FontChooser extends JFrame implements Exportable {
                 loadDefaultFont();
             } else {
                 String fontName = fontList.getSelectedValue();
-                font = new Font(fontName, Font.PLAIN, 24);
+                font = new Font(fontName, Font.PLAIN, 20);
             }
             previewPanel.setFont(font);
             previewPanel.repaint();
@@ -102,36 +100,14 @@ public class FontChooser extends JFrame implements Exportable {
         confirmPanel.add(checkBox);
         confirmPanel.add(label);
 
-        cancel = new JButton("Cancel");
-        confirmPanel.add(cancel);
-
-        confirm = new JButton("Confirm");
+        confirm = new JButton("Close");
         confirmPanel.add(confirm);
         bottomPanel.add(confirmPanel, BorderLayout.SOUTH);
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-        cancelListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                synchronized (this) {
-                    setVisible(false);
-                }
-            }
-        };
+        confirmListener = e -> setVisible(false);
 
-        confirmListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                synchronized (this) {
-                    String fontName = fontList.getSelectedValue();
-                    font = new Font(fontName, Font.PLAIN, 24);
-                    setVisible(false);
-                }
-            }
-        };
-
-        cancel.addActionListener(cancelListener);
         confirm.addActionListener(confirmListener);
 
         checkBox.doClick();
@@ -152,17 +128,19 @@ public class FontChooser extends JFrame implements Exportable {
 
     @Override
     public void importJSON(JSONObject obj) {
-        if (obj.getBoolean("internal")) {
+        boolean useInternal = obj.getBoolean("internal");
+        checkBox.setSelected(useInternal);
+        if (useInternal) {
             loadDefaultFont();
         } else {
-            font = new Font(obj.getString("fontName"), Font.PLAIN, 24);
+            font = new Font(obj.getString("fontName"), Font.PLAIN, 20);
             fontList.setSelectedValue(obj.getString("fontName"), true);
         }
     }
 
     private void loadDefaultFont() {
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()).deriveFont(24f);
+            font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()).deriveFont(20f);
         } catch (FontFormatException | IOException ex) {
             throw new RuntimeException(ex);
         }

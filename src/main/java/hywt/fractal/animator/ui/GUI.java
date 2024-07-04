@@ -416,6 +416,8 @@ public class GUI extends JFrame implements Exportable {
             loaderPanel.repaint();
         } catch (JSONException ignored) {
 
+        } catch (ClassNotFoundException e) {
+            showError("Unknown class: " + e.getMessage());
         } catch (Exception e) {
             showError(e);
         }
