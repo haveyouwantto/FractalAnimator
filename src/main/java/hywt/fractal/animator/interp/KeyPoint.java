@@ -15,7 +15,7 @@ public class KeyPoint implements Comparable<KeyPoint> {
     }
 
     public double getY() {
-        return data.get("frame");
+        return data.get("image");
     }
 
     public double getData(String key) {

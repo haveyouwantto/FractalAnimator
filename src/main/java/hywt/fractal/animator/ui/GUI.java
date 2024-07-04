@@ -266,6 +266,8 @@ public class GUI extends JFrame implements Exportable {
         // Add the Files button to the toolbar
         toolBar.add(filesButton);
 
+
+
         pack();
     }
 
