@@ -15,6 +15,8 @@ public class FontChooser extends JFrame implements Exportable {
     private final JButton confirm;
     private final JList<String> fontList;
     private final JCheckBox checkBox;
+    private final Component previewPanel;
+    private final JTextField searchBar;
     private ActionListener confirmListener;
     private Font font;
 
@@ -36,7 +38,7 @@ public class FontChooser extends JFrame implements Exportable {
         scrollPane.getViewport().add(fontList);
         add(scrollPane);
 
-        JTextField searchBar = new JTextField();
+        searchBar = new JTextField();
         searchBar.getDocument().addDocumentListener(new DocumentListener() {
             private void update() {
                 String query = searchBar.getText().toLowerCase();
@@ -63,13 +65,14 @@ public class FontChooser extends JFrame implements Exportable {
         });
         add(searchBar, BorderLayout.NORTH);
 
-        Component previewPanel = new JTextArea("The quick brown fox jumps over the lazy dog.\n0123456789");
+        previewPanel = new JTextArea("The quick brown fox jumps over the lazy dog.\n0123456789");
         previewPanel.setPreferredSize(new Dimension(getWidth(), 80));
 
         fontList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && !fontList.isSelectionEmpty()) {
                 String fontName = fontList.getSelectedValue();
-                previewPanel.setFont(new Font(fontName, Font.PLAIN, 20));
+                font = new Font(fontName, Font.PLAIN, 20);
+                previewPanel.setFont(font);
                 previewPanel.repaint();
             }
         });
@@ -83,20 +86,7 @@ public class FontChooser extends JFrame implements Exportable {
 
         checkBox = new JCheckBox();
         JLabel label = new JLabel("Internal");
-        checkBox.addActionListener(e -> {
-            boolean useInternal = checkBox.isSelected();
-            fontList.setEnabled(!useInternal);
-            searchBar.setEnabled(!useInternal);
-
-            if (useInternal) {
-                loadDefaultFont();
-            } else {
-                String fontName = fontList.getSelectedValue();
-                font = new Font(fontName, Font.PLAIN, 20);
-            }
-            previewPanel.setFont(font);
-            previewPanel.repaint();
-        });
+        checkBox.addActionListener(e -> updateSelection(checkBox.isSelected()));
         confirmPanel.add(checkBox);
         confirmPanel.add(label);
 
@@ -133,9 +123,24 @@ public class FontChooser extends JFrame implements Exportable {
         if (useInternal) {
             loadDefaultFont();
         } else {
-            font = new Font(obj.getString("fontName"), Font.PLAIN, 20);
+            fontList.setEnabled(true);
             fontList.setSelectedValue(obj.getString("fontName"), true);
         }
+        updateSelection(useInternal);
+    }
+
+    private void updateSelection(boolean useInternal){
+        fontList.setEnabled(!useInternal);
+        searchBar.setEnabled(!useInternal);
+
+        if (useInternal) {
+            loadDefaultFont();
+        } else {
+            String fontName = fontList.getSelectedValue();
+            font = new Font(fontName, Font.PLAIN, 20);
+        }
+        previewPanel.setFont(font);
+        previewPanel.repaint();
     }
 
     private void loadDefaultFont() {
