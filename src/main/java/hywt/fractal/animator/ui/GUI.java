@@ -213,7 +213,7 @@ public class GUI extends JFrame implements Exportable {
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.addChoosableFileFilter(new FileNameExtensionFilter("Fractal Animator Project (.fap)", "fap"));
 
-            int result = chooser.showSaveDialog(filesButton);
+            int result = chooser.showOpenDialog(filesButton);
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = chooser.getSelectedFile();
