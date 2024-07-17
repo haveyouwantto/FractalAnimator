@@ -8,6 +8,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 public class FFmpegProcess {
 
@@ -19,7 +20,7 @@ public class FFmpegProcess {
     public FFmpegProcess(int width, int height, double fps, String ffmpeg, File path, String[] additionalParam) {
         ArrayList<String> param = new ArrayList<>(List.of(
                 ffmpeg,
-                "-r", String.valueOf(fps),
+                "-r", String.format("%.0f", fps),
                 "-colorspace", "bt709",
                 "-pix_fmt", "bgr24",
                 "-f", "rawvideo",
@@ -28,7 +29,8 @@ public class FFmpegProcess {
                 "-pix_fmt", "yuv420p",
                 "-y",
                 path.getAbsolutePath()));
-        param.addAll(15, List.of(additionalParam));
+        param.addAll(param.size() - 2, List.of(additionalParam));
+        System.out.println("Executing: "+ param.stream().reduce("", (s, s2) -> s+" "+s2));
         builder = new ProcessBuilder(param);
         builder.redirectErrorStream(true);
     }

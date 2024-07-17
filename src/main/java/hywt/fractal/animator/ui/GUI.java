@@ -299,15 +299,15 @@ public class GUI extends JFrame implements Exportable {
         chooser.setDialogType(JFileChooser.SAVE_DIALOG);
         chooser.setCurrentDirectory(new File("."));
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter("Matroska Video (.mkv)", "mkv"));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("Flash Video (.flv)", "flv"));
 
         int result = chooser.showSaveDialog(genBtn);
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = chooser.getSelectedFile();
 
-            if (!selectedFile.getName().endsWith(".mkv")) {
-                selectedFile = new File(selectedFile.getAbsolutePath() + ".mkv");
+            if (!selectedFile.getName().endsWith(".flv")) {
+                selectedFile = new File(selectedFile.getAbsolutePath() + ".flv");
             }
 
             progressPanel.start(renderer);
