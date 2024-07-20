@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class KFPNGImageLoader extends ImageLoader {
     List<FractalImage> frameList;
-    static String regex = "\\d\\d\\d\\d\\d_([0-9e.\\-+]+)\\.png$";
+    static String regex = "\\d\\d\\d\\d\\d_([0-9Ee.\\-+]+)\\.(png|jpg)$";
 
     public KFPNGImageLoader(File dir) throws FileNotFoundException {
 
