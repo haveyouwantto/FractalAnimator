@@ -15,6 +15,10 @@ public class FractalScale {
         return Math.log10(2) * zooms;
     }
 
+    public double getLog10Scale(){
+        return Math.log10(4) - getLog10Zooms();
+    }
+
     public String getMagnification(int precision) {
         double log10Zoom = getLog10Zooms();
 
