@@ -15,6 +15,9 @@ public class ExponentialScaleIndicator implements ScaleIndicator {
 
     @Override
     public void draw(Graphics g, FractalScale fractalScale, int width, int height) {
+        int baseScale = 64;
+        int expScale = baseScale / 2;
+
         int margin = (int) (scale * 8);
         int offset = (int) (scale * 4);
 
@@ -22,7 +25,7 @@ public class ExponentialScaleIndicator implements ScaleIndicator {
 
         String ten = "10";
 
-        g.setFont(font.deriveFont((float) (60 * scale)));
+        g.setFont(font.deriveFont((float) (baseScale * scale)));
         FontMetrics metrics = g.getFontMetrics();
         int baseWidth = metrics.stringWidth(ten);
 
@@ -30,14 +33,14 @@ public class ExponentialScaleIndicator implements ScaleIndicator {
 
         g.setColor(Color.BLACK);
         g.drawString(ten, margin + offset, drawY + offset);
-        g.setFont(font.deriveFont((float) (30 * scale)));
-        g.drawString(String.format("%.1f", scaleOf10), margin + baseWidth + offset / 2, (int) (drawY - scale * 30 + offset / 2));
+        g.setFont(font.deriveFont((float) (expScale * scale)));
+        g.drawString(String.format("%.1f", scaleOf10), margin + baseWidth + offset / 2, (int) (drawY - scale * expScale + offset / 2));
 
         g.setColor(Color.WHITE);
-        g.setFont(font.deriveFont((float) (60 * scale)));
+        g.setFont(font.deriveFont((float) (baseScale * scale)));
         g.drawString(ten, margin, drawY);
-        g.setFont(font.deriveFont((float) (30 * scale)));
-        g.drawString(String.format("%.1f", scaleOf10), margin + baseWidth, (int) (drawY - scale * 30));
+        g.setFont(font.deriveFont((float) (expScale * scale)));
+        g.drawString(String.format("%.1f", scaleOf10), margin + baseWidth, (int) (drawY - scale * expScale));
     }
 
     @Override
