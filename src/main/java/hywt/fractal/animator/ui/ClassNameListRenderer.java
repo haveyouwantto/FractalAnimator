@@ -1,5 +1,6 @@
 package hywt.fractal.animator.ui;
 
+import hywt.fractal.animator.Localization;
 import hywt.fractal.animator.Utils;
 
 import javax.swing.*;
@@ -14,7 +15,7 @@ public class ClassNameListRenderer  extends DefaultListCellRenderer {
 
         // Customize the display text for each item
         if (value instanceof Class) {
-            label.setText(Utils.convertToUpperWords(((Class<?>) value).getSimpleName()));
+            label.setText(Localization.get("class."+((Class<?>) value).getName()));
         }
 
         return label;

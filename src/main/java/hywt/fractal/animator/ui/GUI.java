@@ -78,8 +78,8 @@ public class GUI extends JFrame implements Exportable {
         loaderSelect = new JComboBox<>();
 
         loaderSelect.addItem(FZImageLoaderConfigure.class);
-        loaderSelect.addItem(SimpleMandelbrotLoaderConfigure.class);
         loaderSelect.addItem(KFImageLoaderConfigure.class);
+        loaderSelect.addItem(SimpleMandelbrotLoaderConfigure.class);
         loaderSelect.setRenderer(new ClassNameListRenderer());
         loaderSelect.addActionListener(e -> {
             try {

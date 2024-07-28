@@ -1,0 +1,83 @@
+title=\u5206\u5f62\u52a8\u753b\u5668
+
+panel.image=\u56fe\u50cf\u52a0\u8f7d\u5668
+panel.interpolator=\u901f\u5ea6\u63d2\u503c\u5668
+panel.indicator=\u7f29\u653e\u6307\u793a\u5668
+
+menu.files=\u6587\u4ef6
+menu.files.load=\u52a0\u8f7d
+menu.files.save=\u4fdd\u5b58
+
+label.empty=\u7a7a\u7684
+label.browse=\u6d4f\u89c8
+label.generate=\u751f\u6210
+label.abort=\u4e2d\u6b62
+label.internal=\u5185\u90e8
+label.close=\u5173\u95ed
+label.select=\u9009\u62e9
+label.set=\u8bbe\u7f6e
+label.font=\u5b57\u4f53
+
+indicator.key.time=\u65f6\u95f4
+indicator.key.image=\u56fe\u50cf
+indicator.key.maxTrans=\u6700\u5927\u8fc7\u6e21
+indicator.key.accT=\u52a0\u901f\u65f6\u95f4
+indicator.key.decT=\u51cf\u901f\u65f6\u95f4
+
+indicator.class.hywt.fractal.animator.indicator.KFScaleIndicator=Kalles Fraktaler \u98ce\u683c
+indicator.class.hywt.fractal.animator.indicator.FXScaleIndicator=Fractal eXtreme \u98ce\u683c
+indicator.class.hywt.fractal.animator.indicator.OdometerIndicator=\u91cc\u7a0b\u8ba1\u98ce\u683c
+indicator.class.hywt.fractal.animator.indicator.ExponentialScaleIndicator=10\u7684\u6307\u6570
+
+class.hywt.fractal.animator.ui.FZImageLoaderConfigure=Fractal Zoomer \u52a0\u8f7d\u5668
+class.hywt.fractal.animator.ui.SimpleMandelbrotLoaderConfigure=Mandelbrot
+class.hywt.fractal.animator.ui.KFImageLoaderConfigure=Kalles Fraktaler \u56fe\u50cf\u52a0\u8f7d\u5668
+
+class.hywt.fractal.animator.ui.LinearInterpolatorConfigure=\u7ebf\u6027
+class.hywt.fractal.animator.ui.AccelInterpolatorConfigure=\u52a0\u901f
+class.hywt.fractal.animator.ui.SlopeAccelInterpolatorConfigure=\u659c\u7387\u52a0\u901f
+
+
+file.fap=\u5206\u5f62\u52a8\u753b\u5668\u9879\u76ee (.fap)
+file.flv=Flash \u89c6\u9891 (.flv)
+
+image.amount=\u627e\u5230 %d \u5f20\u56fe\u7247
+image.dir=\u9009\u62e9\u4e00\u4e2a\u76ee\u5f55\uff1a
+image.kf.description=Kalles Fraktaler \u56fe\u50cf\u5e8f\u5217\u5bfc\u5165\u5668
+image.kf.tooltip=Kalles Fraktaler PNG \u5e8f\u5217
+image.kf.file=Kalles Fraktaler \u8f93\u51fa\u76ee\u5f55
+image.mandelbrot.description=\u6d4b\u8bd5\u7528 Mandelbrot \u751f\u6210\u5668
+image.mandelbrot.real=\u5b9e\u90e8
+image.mandelbrot.imag=\u865a\u90e8
+image.mandelbrot.magn=\u653e\u5927\u500d\u7387
+image.mandelbrot.iter=\u8fed\u4ee3\u6b21\u6570
+image.fz.description=Fractal Zoomer \u56fe\u50cf\u5e8f\u5217\u5bfc\u5165\u5668
+image.fz.tooltip=Fractal Zoomer \u5e8f\u5217
+image.fz.file=Fractal Zoomer \u8f93\u51fa\u76ee\u5f55
+
+message.warning=\u8b66\u544a
+message.error=\u9519\u8bef
+message.info=\u4fe1\u606f
+message.missing_image=\u7f3a\u5c11\u56fe\u50cf\u3002
+message.missing_indicator=\u5728\u6b64\u7a0b\u5e8f\u4e2d\uff0c\u8bf7\u907f\u514d\u7981\u7528\u6240\u6709\u7f29\u653e\u6307\u793a\u5668\u3002 \n\u7531\u4e8e\u5206\u5f62\u7684\u9ad8\u5ea6\u91cd\u590d\u6027\uff0c\u7f3a\u5c11\u6307\u793a\u5668\u53ef\u80fd\u4f1a\u4f7f\u89c2\u4f17\u611f\u5230\u56f0\u60d1\u3002 \n\u5efa\u8bae\u542f\u7528\u81f3\u5c11\u4e00\u4e2a\u7f29\u653e\u6307\u793a\u5668\u4ee5\u5e2e\u52a9\u89c2\u4f17\u7406\u89e3\uff0c\u5c3d\u7ba1\u8fd9\u4e0d\u662f\u5f3a\u5236\u6027\u7684\u3002 \n\u8c22\u8c22\uff01
+message.completed=\u6e32\u67d3\u5b8c\u6210\u3002
+message.invalidnum=\u65e0\u6548\u6570\u5b57
+message.image_missing=\u56fe\u50cf\u4e0d\u5b58\u5728
+
+font_chooser.title=\u5b57\u4f53\u9009\u62e9\u5668
+
+gen_options.title=\u89c6\u9891\u9009\u9879
+gen_options.width=\u5bbd\u5ea6
+gen_options.height=\u9ad8\u5ea6
+gen_options.fps=\u5e27\u7387
+gen_options.image_blending=\u56fe\u50cf\u6df7\u5408\u6570
+gen_options.start_time=\u5f00\u59cb\u65f6\u95f4
+gen_options.end_time=\u7ed3\u675f\u65f6\u95f4
+gen_options.ffmpeg=FFMPEG\u547d\u4ee4
+gen_options.encoder=\u7f16\u7801\u5668
+
+image_browser.title=\u56fe\u50cf\u6d4f\u89c8\u5668
+image_browser.image=\u56fe\u50cf
+image_browser.format=%.2f \u7f29\u653e | \u653e\u5927\u500d\u7387\uff1a%s
+
+progress_bar.format=%.2f%%    \u5e27\u6570\uff1a%d / %d  \u56fe\u50cf\uff1a%d / %d  \u9884\u8ba1\u5269\u4f59\u65f6\u95f4\uff1a%s

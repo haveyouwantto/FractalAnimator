@@ -24,6 +24,19 @@ indicator.key.maxTrans=Max Transition
 indicator.key.accT=Acceleration Time
 indicator.key.decT=Deceleration Time
 
+indicator.class.hywt.fractal.animator.indicator.KFScaleIndicator=Kalles Fraktaler style
+indicator.class.hywt.fractal.animator.indicator.FXScaleIndicator=Fractal eXtreme style
+indicator.class.hywt.fractal.animator.indicator.OdometerIndicator=Odometer style
+indicator.class.hywt.fractal.animator.indicator.ExponentialScaleIndicator=Exp of 10
+
+class.hywt.fractal.animator.ui.FZImageLoaderConfigure=Fractal Zoomer loader
+class.hywt.fractal.animator.ui.SimpleMandelbrotLoaderConfigure=Mandelbrot
+class.hywt.fractal.animator.ui.KFImageLoaderConfigure=Kalles Fraktaler image loader
+
+class.hywt.fractal.animator.ui.LinearInterpolatorConfigure=Linear
+class.hywt.fractal.animator.ui.AccelInterpolatorConfigure=Acceleration
+class.hywt.fractal.animator.ui.SlopeAccelInterpolatorConfigure=Acceleration by slope
+
 file.fap=Fractal Animator Project (.fap)
 file.flv=Flash Video (.flv)
 
@@ -48,6 +61,7 @@ message.missing_image=Missing image.
 message.missing_indicator=In this program, refrain from disabling all scale indicators. \nDue to the highly repetitive nature of fractals, the absence of indicators may confuse the audience. \nIt is recommended to enable at least one scale indicator to aid viewer comprehension, although it is not mandatory. \nThank you!
 message.completed=Render completed.
 message.invalidnum=Invalid number
+message.image_missing=Image don't exist
 
 font_chooser.title=Font Chooser
 
@@ -58,5 +72,11 @@ gen_options.fps=FPS
 gen_options.image_blending=Image blending
 gen_options.start_time=Start time
 gen_options.end_time=End time
-gen_options.ffmpeg=FFMPEG
+gen_options.ffmpeg=FFMPEG command
 gen_options.encoder=Encoder
+
+image_browser.title=Image Browser
+image_browser.image=Image
+image_browser.format=%.2f zooms | Magnification: %s
+
+progress_bar.format=%.2f%%    Frame: %d / %d  Image: %d / %d  ETA: %s

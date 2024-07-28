@@ -1,5 +1,6 @@
 package hywt.fractal.animator.ui;
 
+import hywt.fractal.animator.Localization;
 import hywt.fractal.animator.Utils;
 import hywt.fractal.animator.VideoRenderer;
 
@@ -26,7 +27,7 @@ public class ProgressPanel extends JProgressBar {
                     int b = renderer.getTotalFrames();
                     double progress = (double) a / b;
                     long currentTime = System.currentTimeMillis();
-                    setString(String.format("%.2f%%    Frame: %d / %d  Image: %d / %d  ETA: %s",
+                    setString(String.format(Localization.get("progress_bar.format"),
                             progress * 100,
                             a, b,
                             renderer.getRenderedKeyframes(), renderer.getTotalKeyframes(),

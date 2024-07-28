@@ -27,7 +27,7 @@ public class IndicatorSelectorPanel extends JPanel implements Exportable {
             JCheckBox checkBox = new JCheckBox();
             indItem.add(checkBox, BorderLayout.WEST);
 
-            JLabel label = new JLabel(Utils.convertToUpperWords(indicatorClass.getSimpleName()));
+            JLabel label = new JLabel(Localization.get("indicator.class."+indicatorClass.getName()));
             indItem.add(label);
 
             if (!set) {
