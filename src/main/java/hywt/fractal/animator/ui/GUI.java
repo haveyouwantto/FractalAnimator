@@ -290,6 +290,7 @@ public class GUI extends JFrame implements Exportable {
         }
         for (Class<? extends ScaleIndicator> indicatorClass : indicators) {
             ScaleIndicator indicator = indicatorClass.getDeclaredConstructor().newInstance();
+            System.out.println(indicator+" "+ indiPanel.getSelectedFont());
             indicator.setFont(indiPanel.getSelectedFont());
             renderer.addScaleIndicator(indicator);
         }
