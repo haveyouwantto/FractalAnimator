@@ -6,10 +6,13 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         FlatDarculaLaf.setup();
+        Localization.initialize();
+
         GUI gui = new GUI();
 
         File defaults = new File("default.fap");

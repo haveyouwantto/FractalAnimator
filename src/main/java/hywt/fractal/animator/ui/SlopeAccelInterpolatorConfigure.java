@@ -23,7 +23,7 @@ public class SlopeAccelInterpolatorConfigure extends InterpolatorConfigure<Slope
     @Override
     public void init() throws Exception {
         super.init();
-        addField("maxTrans","Max Transition", 10);
+        addField("maxTrans", 10);
         addDefault();
     }
 }

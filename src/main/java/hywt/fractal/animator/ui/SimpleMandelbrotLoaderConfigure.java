@@ -1,5 +1,6 @@
 package hywt.fractal.animator.ui;
 
+import hywt.fractal.animator.Localization;
 import hywt.fractal.animator.keyframe.ImageLoader;
 import hywt.fractal.animator.keyframe.SimpleMandelbrotLoader;
 import org.json.JSONObject;
@@ -31,30 +32,30 @@ public class SimpleMandelbrotLoaderConfigure extends ImageLoaderConfigure {
         JTextArea prompt = new JTextArea();
         prompt.setLineWrap(true);
         prompt.setWrapStyleWord(true);
-        prompt.setText("Simple Mandelbrot generator for quick testing purpose.");
+        prompt.setText(Localization.get("image.mandelbrot.description"));
         prompt.setEnabled(false);
 
-        JLabel reLabel = new JLabel("Real");
+        JLabel reLabel = new JLabel(Localization.get("image.mandelbrot.real"));
         reField = new JTextArea("-1.99999911758766165543764649311537154663");
         reField.setLineWrap(true);
-        JLabel imLabel = new JLabel("Imag");
+        JLabel imLabel = new JLabel(Localization.get("image.mandelbrot.imag"));
         imField = new JTextArea("-4.2402439547240753390707694210131039e-13");
         imField.setLineWrap(true);
 
 
-        JLabel magnLabel = new JLabel("Magnification");
+        JLabel magnLabel = new JLabel(Localization.get("image.mandelbrot.magn"));
         magnField = new JTextArea("5.070602e+30");
-        JLabel iterLabel = new JLabel("Iter");
+        JLabel iterLabel = new JLabel(Localization.get("image.mandelbrot.iter"));
         iterField = new JTextArea("1024");
 
-        button = new JButton("Set");
+        button = new JButton(Localization.get("label.set"));
         button.addActionListener(e -> {
                     try {
                         manager = new SimpleMandelbrotLoader(
                                 new BigDecimal(reField.getText()), new BigDecimal(imField.getText()), Double.parseDouble(magnField.getText()), Integer.parseInt(iterField.getText()));
                         load();
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "Invalid number", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, Localization.get("message.invalidnum"), Localization.get("message.error"), JOptionPane.ERROR_MESSAGE);
                     }
                 }
         );

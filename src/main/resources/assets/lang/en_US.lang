@@ -1,0 +1,62 @@
+title=Fractal Animator
+
+panel.image=Image Loader
+panel.interpolator=Speed Interpolator
+panel.indicator=Zoom Indicator
+
+menu.files=Files
+menu.files.load=Load
+menu.files.save=Save
+
+label.empty=Empty
+label.browse=Browse
+label.generate=Generate
+label.abort=Abort
+label.internal=Internal
+label.close=Close
+label.select=Select
+label.set=Set
+label.font=Font
+
+indicator.key.time=Time
+indicator.key.image=Image
+indicator.key.maxTrans=Max Transition
+indicator.key.accT=Acceleration Time
+indicator.key.decT=Deceleration Time
+
+file.fap=Fractal Animator Project (.fap)
+file.flv=Flash Video (.flv)
+
+image.amount=Fount %d images
+image.dir=Select a directory:
+image.kf.description=Kalles Fraktaler image sequence importer
+image.kf.tooltip=Kalles Fraktaler PNG sequence
+image.kf.file=Kalles Fraktaler output directory
+image.mandelbrot.description=Simple Mandelbrot generator for quick testing purpose.
+image.mandelbrot.real=Real
+image.mandelbrot.imag=Imaginary
+image.mandelbrot.magn=Magnification
+image.mandelbrot.iter=Iterations
+image.fz.description=Fractal Zoomer image sequence importer
+image.fz.tooltip=Fractal Zoomer sequence
+image.fz.file=Fractal Zoomer output directory
+
+message.warning=Warning
+message.error=Error
+message.info=Info
+message.missing_image=Missing image.
+message.missing_indicator=In this program, refrain from disabling all scale indicators. \nDue to the highly repetitive nature of fractals, the absence of indicators may confuse the audience. \nIt is recommended to enable at least one scale indicator to aid viewer comprehension, although it is not mandatory. \nThank you!
+message.completed=Render completed.
+message.invalidnum=Invalid number
+
+font_chooser.title=Font Chooser
+
+gen_options.title=Video Options
+gen_options.width=Width
+gen_options.height=Height
+gen_options.fps=FPS
+gen_options.image_blending=Image blending
+gen_options.start_time=Start time
+gen_options.end_time=End time
+gen_options.ffmpeg=FFMPEG
+gen_options.encoder=Encoder

@@ -1,5 +1,6 @@
 package hywt.fractal.animator.ui;
 
+import hywt.fractal.animator.Localization;
 import hywt.fractal.animator.interp.Interpolator;
 import hywt.fractal.animator.interp.KeyPoint;
 import org.json.JSONArray;
@@ -35,8 +36,8 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
         editPanel.add(inputPanel);
 
-        addField("time", "Time", 0);
-        addField("image", "Image", 0);
+        addField("time", 0);
+        addField("image", 0);
 
         pointList = new ArrayList<>();
 
@@ -112,8 +113,8 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
         pointJList.setModel(lm);
     }
 
-    protected void addField(String key, String displayName, double defaultValue) {
-        LabeledField field = new LabeledField(displayName);
+    protected void addField(String key, double defaultValue) {
+        LabeledField field = new LabeledField(Localization.get("indicator.key."+key));
         field.field.setText(String.valueOf(defaultValue));
         extraFields.put(key, field);
         inputPanel.add(field);

@@ -24,8 +24,8 @@ public class AccelInterpolatorConfigure extends InterpolatorConfigure<AccelInter
     @Override
     public void init() throws Exception {
         super.init();
-        addField("accT","Acceleration Time", 5);
-        addField("decT", "Deceleration Time",5);
+        addField("accT", 5);
+        addField("decT",5);
         addDefault();
     }
 }

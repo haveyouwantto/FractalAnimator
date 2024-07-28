@@ -1,6 +1,7 @@
 package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.Exportable;
+import hywt.fractal.animator.Localization;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ public class FontChooser extends JFrame implements Exportable {
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
         setPreferredSize(new Dimension(640, 360));
-        setTitle("Choose a font");
+        setTitle(Localization.get("font_chooser.title"));
 
         String[] fontNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         JScrollPane scrollPane = new JScrollPane();
@@ -85,12 +86,12 @@ public class FontChooser extends JFrame implements Exportable {
         JPanel confirmPanel = new JPanel();
 
         checkBox = new JCheckBox();
-        JLabel label = new JLabel("Internal");
+        JLabel label = new JLabel(Localization.get("label.internal"));
         checkBox.addActionListener(e -> updateSelection(checkBox.isSelected()));
         confirmPanel.add(checkBox);
         confirmPanel.add(label);
 
-        confirm = new JButton("Close");
+        confirm = new JButton(Localization.get("label.close"));
         confirmPanel.add(confirm);
         bottomPanel.add(confirmPanel, BorderLayout.SOUTH);
 

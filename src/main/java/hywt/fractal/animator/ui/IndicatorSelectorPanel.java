@@ -1,6 +1,7 @@
 package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.Exportable;
+import hywt.fractal.animator.Localization;
 import hywt.fractal.animator.indicator.ScaleIndicator;
 import hywt.fractal.animator.Utils;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ public class IndicatorSelectorPanel extends JPanel implements Exportable {
             checkBoxMap.put(indicatorClass, checkBox);
         }
 
-        JButton fontSelector = new JButton("Font");
+        JButton fontSelector = new JButton(Localization.get("label.font"));
         fontSelector.addActionListener(e -> {
             fontChooser.setLocationRelativeTo(fontSelector);
             fontChooser.setVisible(true);

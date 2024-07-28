@@ -2,6 +2,7 @@ package hywt.fractal.animator.ui;
 
 import hywt.fractal.animator.EncodingParam;
 import hywt.fractal.animator.Exportable;
+import hywt.fractal.animator.Localization;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -24,14 +25,14 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
         JPanel genOptionsPanel = new JPanel();
 
         getViewport().add(genOptionsPanel);
-        setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Video Options",
+        setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), Localization.get("gen_options.title"),
                 TitledBorder.CENTER, TitledBorder.TOP, null, null));
 
         genOptionsPanel.setLayout(new BoxLayout(genOptionsPanel, BoxLayout.Y_AXIS));
 
         // Width configuration
         BinaryPanel widthPanel = new BinaryPanel();
-        widthPanel.addLeft(new JLabel("Width: "));
+        widthPanel.addLeft(new JLabel(Localization.get("gen_options.width")));
         widthSpinner = new JSpinner();
         widthSpinner.setValue(1920);
         widthPanel.addRight(widthSpinner);
@@ -39,7 +40,7 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
 
         // Height configuration
         BinaryPanel heightPanel = new BinaryPanel();
-        heightPanel.addLeft(new JLabel("Height: "));
+        heightPanel.addLeft(new JLabel(Localization.get("gen_options.height")));
         heightSpinner = new JSpinner();
         heightSpinner.setValue(1080);
         heightPanel.addRight(heightSpinner);
@@ -47,7 +48,7 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
 
         // FPS configuration
         BinaryPanel fpsPanel = new BinaryPanel();
-        fpsPanel.addLeft(new JLabel("FPS: "));
+        fpsPanel.addLeft(new JLabel(Localization.get("gen_options.fps")));
         fpsSpinner = new JSpinner();
         fpsSpinner.setValue(60);
         fpsPanel.addRight(fpsSpinner);
@@ -55,7 +56,7 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
 
 
         BinaryPanel blendingPanel = new BinaryPanel();
-        blendingPanel.addLeft(new JLabel("Image Blending:"));
+        blendingPanel.addLeft(new JLabel(Localization.get("gen_options.image_blending")));
         blendingSpinner = new JSpinner();
         blendingSpinner.setValue(4);
         blendingPanel.addRight(blendingSpinner);
@@ -63,14 +64,14 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
 
 
         BinaryPanel startTimePanel = new BinaryPanel();
-        startTimePanel.addLeft(new JLabel("Start Time:"));
+        startTimePanel.addLeft(new JLabel(Localization.get("gen_options.start_time")));
         startTimeSpinner = new JSpinner();
         startTimeSpinner.setValue(2);
         startTimePanel.addRight(startTimeSpinner);
         genOptionsPanel.add(startTimePanel);
 
         BinaryPanel endTimePanel = new BinaryPanel();
-        endTimePanel.addLeft(new JLabel("End Time:"));
+        endTimePanel.addLeft(new JLabel(Localization.get("gen_options.end_time")));
         endTimeSpinner = new JSpinner();
         endTimeSpinner.setValue(2);
         endTimePanel.addRight(endTimeSpinner);
@@ -78,14 +79,14 @@ public class GenOptionsPanel extends JScrollPane implements Exportable {
 
         // FFmpeg configuration
         BinaryPanel ffmpegPanel = new BinaryPanel();
-        ffmpegPanel.addLeft(new JLabel("FFmpeg: "));
+        ffmpegPanel.addLeft(new JLabel(Localization.get("gen_options.ffmpeg")));
         ffmpegCmd = new JTextField("ffmpeg");
         ffmpegPanel.addRight(ffmpegCmd);
         genOptionsPanel.add(ffmpegPanel);
 
         // Encoder configuration
         BinaryPanel encoderPanel = new BinaryPanel();
-        encoderPanel.addLeft(new JLabel("Encoder: "));
+        encoderPanel.addLeft(new JLabel(Localization.get("gen_options.encoder")));
         paramJComboBox = new JComboBox<>();
         Arrays.stream(EncodingParam.values()).forEach(paramJComboBox::addItem);
         encoderPanel.addRight(paramJComboBox);

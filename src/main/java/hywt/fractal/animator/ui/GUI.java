@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class GUI extends JFrame implements Exportable {
 
     public GUI() {
 
-        setTitle("Fractal Animator");
+        setTitle(Localization.get("title"));
         setPreferredSize(new Dimension(854, 480));
         setLocation(100, 100);
         setIconImage(Toolkit.getDefaultToolkit()
@@ -66,12 +67,12 @@ public class GUI extends JFrame implements Exportable {
 
         loaderPanel = new JPanel();
         loaderPanel.setLayout(new CardLayout());
-        loaderPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Image Loader",
+        loaderPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), Localization.get("panel.image"),
                 TitledBorder.CENTER, TitledBorder.TOP, null, null));
         loaderPanel.setLayout(new BorderLayout());
         controls.add(loaderPanel);
 
-        frameNum = new JLabel("Empty");
+        frameNum = new JLabel(Localization.get("label.empty"));
         loaderPanel.add(frameNum, BorderLayout.SOUTH);
 
         loaderSelect = new JComboBox<>();
@@ -88,10 +89,10 @@ public class GUI extends JFrame implements Exportable {
                 }
                 loaderConfigure = ((Class<? extends ImageLoaderConfigure>) Objects.requireNonNull(loaderSelect.getSelectedItem())).getDeclaredConstructor().newInstance();
                 loaderConfigure.setOnLoadCallable(() -> {
-                    frameNum.setText("Found " + loaderConfigure.get().size() + " images");
+                    frameNum.setText(String.format(Localization.get("image.amount"), loaderConfigure.get().size()));
                     return null;
                 });
-                frameNum.setText("Empty");
+                frameNum.setText(Localization.get("label.empty"));
                 loaderConfigure.init();
 
                 loaderPanel.add(loaderConfigure, BorderLayout.CENTER);
@@ -137,7 +138,7 @@ public class GUI extends JFrame implements Exportable {
             }
         });
 
-        interpPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Speed Interpolator",
+        interpPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), Localization.get("panel.interpolator"),
                 TitledBorder.CENTER, TitledBorder.TOP, null, null));
         interpPanel.add(interpSelect, BorderLayout.NORTH);
         controls.add(interpPanel);
@@ -147,27 +148,27 @@ public class GUI extends JFrame implements Exportable {
         };
 
         indiPanel = new IndicatorSelectorPanel(indicatorClasses);
-        indiPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Zoom Indicator",
+        indiPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), Localization.get("panel.indicator"),
                 TitledBorder.CENTER, TitledBorder.TOP, null, null));
         indiPanel.setLayout(new BoxLayout(indiPanel, BoxLayout.Y_AXIS));
         controls.add(indiPanel);
 
 
-        browseBtn = new JButton("Browse");
+        browseBtn = new JButton(Localization.get("label.browse"));
         browseBtn.addActionListener(e -> {
             try {
                 ImageBrowser fb = new ImageBrowser(loaderConfigure.get());
                 fb.setLocationRelativeTo(browseBtn);
                 fb.setVisible(true);
             } catch (NullPointerException ex) {
-                showError("Missing images.");
+                showError(Localization.get("message.missing_image"));
             } catch (Exception ex) {
                 showError(ex);
             }
         });
         operationPanel.add(browseBtn);
 
-        genBtn = new JButton("Generate");
+        genBtn = new JButton(Localization.get("label.generate"));
         genBtn.addActionListener(e -> {
             try {
                 if (loaderConfigure != null && loaderConfigure.get() != null) {
@@ -179,7 +180,7 @@ public class GUI extends JFrame implements Exportable {
                         progressPanel.stop();
                     }
                 } else {
-                    showError("Missing images.");
+                    showError(Localization.get("message.missing_image"));
                 }
             } catch (Exception ex) {
                 showError(ex);
@@ -195,12 +196,12 @@ public class GUI extends JFrame implements Exportable {
 
 
         // Create the Files button
-        JButton filesButton = new JButton("Files");
+        JButton filesButton = new JButton(Localization.get("menu.files"));
 
         // Create the popup menu
         JPopupMenu fileMenu = new JPopupMenu();
-        JMenuItem loadMenuItem = new JMenuItem("Load");
-        JMenuItem saveMenuItem = new JMenuItem("Save");
+        JMenuItem loadMenuItem = new JMenuItem(Localization.get("menu.files.load"));
+        JMenuItem saveMenuItem = new JMenuItem(Localization.get("menu.files.save"));
         fileMenu.add(loadMenuItem);
         fileMenu.add(saveMenuItem);
 
@@ -211,7 +212,7 @@ public class GUI extends JFrame implements Exportable {
             chooser.setDialogType(JFileChooser.OPEN_DIALOG);
             chooser.setCurrentDirectory(new File("."));
             chooser.setAcceptAllFileFilterUsed(false);
-            chooser.addChoosableFileFilter(new FileNameExtensionFilter("Fractal Animator Project (.fap)", "fap"));
+            chooser.addChoosableFileFilter(new FileNameExtensionFilter(Localization.get("file.fap"), "fap"));
 
             int result = chooser.showOpenDialog(filesButton);
 
@@ -235,7 +236,7 @@ public class GUI extends JFrame implements Exportable {
             chooser.setDialogType(JFileChooser.SAVE_DIALOG);
             chooser.setCurrentDirectory(new File("."));
             chooser.setAcceptAllFileFilterUsed(false);
-            chooser.addChoosableFileFilter(new FileNameExtensionFilter("Fractal Animator Project (.fap)", "fap"));
+            chooser.addChoosableFileFilter(new FileNameExtensionFilter(Localization.get("file.fap"), "fap"));
 
             int result = chooser.showSaveDialog(filesButton);
 
@@ -281,11 +282,8 @@ public class GUI extends JFrame implements Exportable {
 
         List<Class<? extends ScaleIndicator>> indicators = indiPanel.getSelected();
         if (indicators.isEmpty()) {
-            String message = "In this program, refrain from disabling all scale indicators. \n" +
-                    "Due to the highly repetitive nature of fractals, the absence of indicators may confuse the audience. \n" +
-                    "It is recommended to enable at least one scale indicator to aid viewer comprehension, although it is not mandatory. \n" +
-                    "Thank you!";
-            int choice = JOptionPane.showConfirmDialog(this, message, "Warning", JOptionPane.OK_CANCEL_OPTION);
+            String message = Localization.get("message.missing_indicator");
+            int choice = JOptionPane.showConfirmDialog(this, message, Localization.get("message.warning"), JOptionPane.OK_CANCEL_OPTION);
             if (choice != JOptionPane.YES_OPTION) return;
         }
         for (Class<? extends ScaleIndicator> indicatorClass : indicators) {
@@ -300,7 +298,7 @@ public class GUI extends JFrame implements Exportable {
         chooser.setDialogType(JFileChooser.SAVE_DIALOG);
         chooser.setCurrentDirectory(new File("."));
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter("Flash Video (.flv)", "flv"));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(Localization.get("file.flv"), "flv"));
 
         int result = chooser.showSaveDialog(genBtn);
 
@@ -329,7 +327,7 @@ public class GUI extends JFrame implements Exportable {
                                 genOptionsPanel.getSelectedParam()
                         );
                         renderer.ffmpegRender(manager, params, finalSelectedFile);
-                        showInfo("Render completed.");
+                        showInfo(Localization.get("message.completed"));
                     } catch (Exception e) {
                         showError(e);
                     } finally {
@@ -350,24 +348,24 @@ public class GUI extends JFrame implements Exportable {
     }
 
     private void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, Localization.get("message.error"), JOptionPane.ERROR_MESSAGE);
     }
 
     private void showWarning(String message) {
-        JOptionPane.showMessageDialog(this, message, "Warning", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, Localization.get("message.warning"), JOptionPane.WARNING_MESSAGE);
     }
 
     private void showInfo(String message) {
-        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, Localization.get("message.info"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void setRendering(boolean rendering) {
         this.rendering = rendering;
         browseBtn.setEnabled(!rendering);
         if (rendering) {
-            genBtn.setText("Abort");
+            genBtn.setText(Localization.get("label.abort"));
         } else {
-            genBtn.setText("Generate");
+            genBtn.setText(Localization.get("label.generate"));
         }
     }
 
@@ -408,7 +406,7 @@ public class GUI extends JFrame implements Exportable {
             loaderSelect.setSelectedItem(c);
             loaderConfigure = (ImageLoaderConfigure) c.getDeclaredConstructor().newInstance();
             loaderConfigure.setOnLoadCallable(() -> {
-                frameNum.setText("Found " + loaderConfigure.get().size() + " images");
+                frameNum.setText(String.format(Localization.get("image.amount"), loaderConfigure.get().size()));
                 return null;
             });
             loaderConfigure.init();
