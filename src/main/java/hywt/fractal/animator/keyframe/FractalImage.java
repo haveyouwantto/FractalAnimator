@@ -17,6 +17,10 @@ public abstract class FractalImage implements Comparable<FractalImage>, Closeabl
 
     public abstract BufferedImage getImage() throws Exception;
 
+    public BufferedImage getImage(double ratio) throws Exception {
+        return getImage();
+    }
+
     @Override
     public String toString() {
         return "FractalFrame{" +

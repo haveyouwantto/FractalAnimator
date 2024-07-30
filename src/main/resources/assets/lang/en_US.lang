@@ -32,6 +32,7 @@ indicator.class.hywt.fractal.animator.indicator.ExponentialScaleIndicator=Exp of
 class.hywt.fractal.animator.ui.FZImageLoaderConfigure=Fractal Zoomer loader
 class.hywt.fractal.animator.ui.SimpleMandelbrotLoaderConfigure=Mandelbrot
 class.hywt.fractal.animator.ui.KFImageLoaderConfigure=Kalles Fraktaler image loader
+class.hywt.fractal.animator.ui.KFBLoaderConfigure=KFB loader
 
 class.hywt.fractal.animator.ui.LinearInterpolatorConfigure=Linear
 class.hywt.fractal.animator.ui.AccelInterpolatorConfigure=Acceleration
@@ -45,6 +46,7 @@ image.dir=Select a directory:
 image.kf.description=Kalles Fraktaler image sequence importer
 image.kf.tooltip=Kalles Fraktaler PNG sequence
 image.kf.file=Kalles Fraktaler output directory
+image.kfb.description=Kalles Fraktaler raw data importer
 image.mandelbrot.description=Simple Mandelbrot generator for quick testing purpose.
 image.mandelbrot.real=Real
 image.mandelbrot.imag=Imaginary

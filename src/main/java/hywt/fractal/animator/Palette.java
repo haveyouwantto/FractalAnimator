@@ -2,7 +2,7 @@ package hywt.fractal.animator;
 
 public class Palette {
 
-    private static int[][] palette = {{1, 1, 1}, {205, 92, 92}, {240, 128, 128}, {255, 0, 0}, {178, 34, 34}, {139, 0, 0},
+    private static int[][] PALETTE = {{1, 1, 1}, {205, 92, 92}, {240, 128, 128}, {255, 0, 0}, {178, 34, 34}, {139, 0, 0},
             {188, 143, 143}, {165, 42, 42}, {128, 0, 0}, {250, 128, 114}, {255, 99, 71}, {233, 150, 122}, {255, 127, 80},
             {255, 69, 0}, {255, 160, 122}, {160, 82, 45}, {210, 105, 30}, {139, 69, 19}, {244, 164, 96}, {255, 218, 185},
             {205, 133, 63}, {255, 228, 196}, {255, 140, 0}, {222, 184, 135}, {210, 180, 140}, {255, 222, 173},
@@ -21,7 +21,18 @@ public class Palette {
             {220, 20, 60}, {255, 192, 203}, {255, 182, 193}, {220, 220, 220}, {211, 211, 211}, {192, 192, 192},
             {169, 169, 169}, {128, 128, 128}, {105, 105, 105}, {119, 136, 153}, {112, 128, 144}, {47, 79, 79}};
 
-    private static float[] colorTrans( float it) {
+
+    private int[][] palette;
+
+    public Palette() {
+        this(PALETTE);
+    }
+
+    public Palette(int[] ...palette){
+        this.palette = palette;
+    }
+
+    private float[] colorTrans( float it) {
         float percent = it - (float) Math.floor(it);
         int c1 = (int) Math.floor(it) % palette.length;
         int c2 = (c1 + 1) % palette.length;
@@ -37,7 +48,7 @@ public class Palette {
      * @param it - The escape time for a point or null if it doesn't escape.
      * @returns An array containing RGBA values for the color associated with the escape time.
      */
-    public static int getColor(int it) {
+    public int getColor(int it) {
         if (it == -1) {
             return 0;
         }

@@ -189,9 +189,11 @@ public class SimpleMandelbrotLoader extends ImageLoader {
                 }
             }
 
+            Palette palette = new Palette();
+
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    image.setRGB(x, y, (map[y][x] >= 0 && map[y][x] < iterations) ? Palette.getColor(map[y][x]) : 0);
+                    image.setRGB(x, y, (map[y][x] >= 0 && map[y][x] < iterations) ? palette.getColor(map[y][x]) : 0);
                 }
             }
             if (glitches.size() > 4 && refs < 70) {

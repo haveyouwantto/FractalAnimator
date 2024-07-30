@@ -79,6 +79,7 @@ public class GUI extends JFrame implements Exportable {
 
         loaderSelect.addItem(FZImageLoaderConfigure.class);
         loaderSelect.addItem(KFImageLoaderConfigure.class);
+        loaderSelect.addItem(KFBLoaderConfigure.class);
         loaderSelect.addItem(SimpleMandelbrotLoaderConfigure.class);
         loaderSelect.setRenderer(new ClassNameListRenderer());
         loaderSelect.addActionListener(e -> {
