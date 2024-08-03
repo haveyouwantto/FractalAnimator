@@ -82,3 +82,7 @@ image_browser.image=Image
 image_browser.format=%.2f zooms | Magnification: %s
 
 progress_bar.format=%.2f%%    Frame: %d / %d  Image: %d / %d  ETA: %s
+
+op.insert=+
+op.delete=-
+op.update=Modify

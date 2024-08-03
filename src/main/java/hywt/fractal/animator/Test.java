@@ -28,6 +28,6 @@ public class Test {
 
         renderer.ffmpegRender(manager, new RenderParams(
                 1920,1080,60, 4,2,2,"ffmpeg",EncodingParam.NVENC
-        ), new File("output/test3.mkv"));
+        ), new File("output/test3.flv"));
     }
 }

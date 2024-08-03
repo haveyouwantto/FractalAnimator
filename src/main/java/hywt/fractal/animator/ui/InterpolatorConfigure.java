@@ -50,7 +50,7 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
 
         JPanel btnPanel = new JPanel();
         editPanel.add(btnPanel);
-        JButton addBtn = new JButton("+");
+        JButton addBtn = new JButton(Localization.get("op.insert"));
         btnPanel.add(addBtn);
         addBtn.addActionListener(e -> {
             try {
@@ -62,7 +62,7 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
             }
         });
 
-        JButton removeBtn = new JButton("-");
+        JButton removeBtn = new JButton(Localization.get("op.delete"));
         removeBtn.addActionListener(e -> {
             int i = pointJList.getSelectedIndex();
             if (i >= 0) {
@@ -73,7 +73,7 @@ public abstract class InterpolatorConfigure<T extends Interpolator> extends Opti
         });
         btnPanel.add(removeBtn);
 
-        JButton modBtn = new JButton("M");
+        JButton modBtn = new JButton(Localization.get("op.update"));
         modBtn.addActionListener(e -> {
             int i = pointJList.getSelectedIndex();
             if (i >= 0) {
