@@ -31,7 +31,7 @@ public class VideoRenderer {
     // Multithreading
     private ExecutorService service;
     private BlockingQueue<Worker> workers;
-    private BlockingQueue<byte[]> imgQueue;
+    private BlockingQueue<Worker> imgQueue;
 
     private int renderedFrames;
     private int renderedKeyframes;
@@ -80,7 +80,7 @@ public class VideoRenderer {
         for (int i = 0; i < processors; i++) {
             workers.add(new Worker(this));
         }
-        imgQueue = new ArrayBlockingQueue<>(processors);
+        imgQueue = new ArrayBlockingQueue<>(4);
 
 
         if (interpolator == null) throw new IllegalStateException("Interpolator not set.");
@@ -90,8 +90,9 @@ public class VideoRenderer {
         Thread consumerThread = new Thread(() -> {
             try {
                 while (process.getFfmpeg().isAlive()) {
-                    byte[] imgData = imgQueue.take();
-                    process.write(imgData);
+                    Worker worker = imgQueue.take();
+                    process.write(((DataBufferByte) worker.fb.getData().getDataBuffer()).getData());
+                    workers.put(worker);
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -166,7 +167,7 @@ public class VideoRenderer {
     private void renderFrame(List<Double> factors, FFmpegProcess process, FractalImage... frames)
             throws Exception {
 
-        List<Future<byte[]>> futures = new LinkedList<>();
+        List<Future<Worker>> futures = new LinkedList<>();
 
         int baseFactor = factors.get(0).intValue();
 
@@ -179,22 +180,24 @@ public class VideoRenderer {
         double scaleFix = Math.log(width * 1.0 / height) / Math.log(2) - Math.log(images[0].getWidth() * 1.0 / images[0].getHeight()) / Math.log(2);
 
         for (double factor : factors) {
-            Callable<byte[]> c = () -> {
-                Worker worker = workers.take();
-                byte[] imageData = worker.draw(images, frames, factor - baseFactor, scaleFix);
-                synchronized (VideoRenderer.this){
-                    renderedFrames++;
+            Callable<Worker> c = () -> {
+                try {
+                    Worker worker = workers.take();
+                    worker.draw(images, frames, factor - baseFactor, scaleFix);
+                    synchronized (VideoRenderer.this) {
+                        renderedFrames++;
+                    }
+                    return worker;
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-                workers.put(worker);
-                return imageData;
             };
 
             futures.add(service.submit(c));
         }
 
-        for (Future<byte[]> future : futures) {
-                byte[] imageData = future.get();
-                imgQueue.put(imageData);
+        for (Future<Worker> w : futures) {
+            imgQueue.put(w.get());
         }
     }
 
@@ -260,7 +263,7 @@ public class VideoRenderer {
             this.fb = new BufferedImage(context.width, context.height, BufferedImage.TYPE_3BYTE_BGR);
         }
 
-        byte[] draw(BufferedImage[] images, FractalImage[] frames, double scale, double scaleFix) {
+        void draw(BufferedImage[] images, FractalImage[] frames, double scale, double scaleFix) {
             BufferedImage buffer = fb;
             Graphics2D g2d = buffer.createGraphics();
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -279,7 +282,7 @@ public class VideoRenderer {
                 indicator.draw(g2d, new FractalScale(frames[0].getScale().getZooms() + scale + scaleFix), width, height);
             }
 
-            return ((DataBufferByte) fb.getData().getDataBuffer()).getData();
+//            return ((DataBufferByte) fb.getData().getDataBuffer()).getData();
         }
     }
 }
