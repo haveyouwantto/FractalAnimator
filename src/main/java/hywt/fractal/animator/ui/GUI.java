@@ -12,14 +12,11 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -192,19 +189,18 @@ public class GUI extends JFrame implements Exportable {
         genOptionsPanel = new GenOptionsPanel();
         controls.add(genOptionsPanel);
 
-        JToolBar toolBar = new JToolBar();
+        JMenuBar toolBar = new JMenuBar();
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
 
         // Create the Files button
-        JButton filesButton = new JButton(Localization.get("menu.files"));
+        JMenu filesMenu = new JMenu(Localization.get("menu.files"));
 
-        // Create the popup menu
-        JPopupMenu fileMenu = new JPopupMenu();
+        // Create the menu
         JMenuItem loadMenuItem = new JMenuItem(Localization.get("menu.files.load"));
         JMenuItem saveMenuItem = new JMenuItem(Localization.get("menu.files.save"));
-        fileMenu.add(loadMenuItem);
-        fileMenu.add(saveMenuItem);
+        filesMenu.add(loadMenuItem);
+        filesMenu.add(saveMenuItem);
 
         // Add action listeners to the menu items
         loadMenuItem.addActionListener(e -> {
@@ -215,7 +211,7 @@ public class GUI extends JFrame implements Exportable {
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.addChoosableFileFilter(new FileNameExtensionFilter(Localization.get("file.fap"), "fap"));
 
-            int result = chooser.showOpenDialog(filesButton);
+            int result = chooser.showOpenDialog(filesMenu);
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = chooser.getSelectedFile();
@@ -239,7 +235,7 @@ public class GUI extends JFrame implements Exportable {
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.addChoosableFileFilter(new FileNameExtensionFilter(Localization.get("file.fap"), "fap"));
 
-            int result = chooser.showSaveDialog(filesButton);
+            int result = chooser.showSaveDialog(filesMenu);
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = chooser.getSelectedFile();
@@ -257,16 +253,10 @@ public class GUI extends JFrame implements Exportable {
             }
         });
 
-        // Add a mouse listener to the Files button to show the popup menu
-        filesButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                fileMenu.show(e.getComponent(), filesButton.getX(), filesButton.getY() + filesButton.getHeight());
-            }
-        });
+
 
         // Add the Files button to the toolbar
-        toolBar.add(filesButton);
+        toolBar.add(filesMenu);
 
 
 
