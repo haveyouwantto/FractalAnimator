@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class VideoRenderer {
     private int width;
@@ -33,7 +34,7 @@ public class VideoRenderer {
     private BlockingQueue<Worker> workers;
     private BlockingQueue<Worker> imgQueue;
 
-    private int renderedFrames;
+    private AtomicInteger renderedFrames;
     private int renderedKeyframes;
     private int totalKeyframes;
     private boolean finished;
@@ -46,7 +47,7 @@ public class VideoRenderer {
     public VideoRenderer() {
         indicators = new LinkedList<>();
 
-        renderedFrames = 0;
+        renderedFrames = new AtomicInteger();
         mergeFrames = 4;
     }
 
@@ -87,20 +88,7 @@ public class VideoRenderer {
         process = new FFmpegProcess(width, height, fps, params.ffmpeg(), file, params.param().getParam());
         process.start();
 
-        Thread consumerThread = new Thread(() -> {
-            try {
-                while (process.getFfmpeg().isAlive()) {
-                    Worker worker = imgQueue.take();
-                    process.write(((DataBufferByte) worker.fb.getData().getDataBuffer()).getData());
-                    workers.put(worker);
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-
-            }
-        });
-        consumerThread.setDaemon(true);
+        Thread consumerThread = getThread();
         consumerThread.start();
 
         startTime = params.startTime();
@@ -113,7 +101,7 @@ public class VideoRenderer {
 
         if (params.startTime() > 0) {
             List<Double> initScales = Collections.nCopies((int) (fps * startTime), 0.0);
-            renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
+            renderFrame(initScales, manager.get(0), manager.get(1), manager.get(2));
         }
 
         FractalImage[] fractalImages = new FractalImage[mergeFrames];
@@ -146,7 +134,7 @@ public class VideoRenderer {
             }
 
             if (!scales.isEmpty()) {
-                renderFrame(scales, process,
+                renderFrame(scales,
                         fractalImages
                 );
             }
@@ -156,15 +144,38 @@ public class VideoRenderer {
 
         if (params.endTime() > 0) {
             List<Double> endScales = Collections.nCopies((int) (fps * endTime), (double) (manager.size() - 1));
-            renderFrame(endScales, process, manager.getLast());
+            renderFrame(endScales, manager.getLast());
         }
 
         process.finish();
-        service.shutdown();
+        if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+            service.shutdownNow();
+        }
         finished = true;
     }
 
-    private void renderFrame(List<Double> factors, FFmpegProcess process, FractalImage... frames)
+    private Thread getThread() {
+        Thread consumerThread = new Thread(() -> {
+            try {
+                while (process.getFfmpeg().isAlive()) {
+                    Worker worker;
+                    if ((worker = imgQueue.poll(5, TimeUnit.SECONDS)) != null) {
+                        process.write(((DataBufferByte) worker.fb.getData().getDataBuffer()).getData());
+                        workers.put(worker);
+                    }
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+
+            }
+        });
+        consumerThread.setName("Data Writer Thread");
+        consumerThread.setDaemon(true);
+        return consumerThread;
+    }
+
+    private void renderFrame(List<Double> factors, FractalImage... frames)
             throws Exception {
 
         List<Future<Worker>> futures = new LinkedList<>();
@@ -181,23 +192,21 @@ public class VideoRenderer {
 
         for (double factor : factors) {
             Callable<Worker> c = () -> {
-                try {
-                    Worker worker = workers.take();
-                    worker.draw(images, frames, factor - baseFactor, scaleFix);
-                    synchronized (VideoRenderer.this) {
-                        renderedFrames++;
-                    }
-                    return worker;
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                Worker worker;
+                synchronized (this) {
+                    worker = workers.take();
                 }
+                worker.draw(images, frames, factor - baseFactor, scaleFix);
+                renderedFrames.incrementAndGet();
+                return worker;
             };
 
             futures.add(service.submit(c));
         }
 
         for (Future<Worker> w : futures) {
-            imgQueue.put(w.get());
+            Worker worker = w.get();
+            imgQueue.put(worker);
         }
     }
 
@@ -230,7 +239,7 @@ public class VideoRenderer {
     }
 
     public synchronized int getRenderedFrames() {
-        return renderedFrames;
+        return renderedFrames.get();
     }
 
     public synchronized int getTotalFrames() {
