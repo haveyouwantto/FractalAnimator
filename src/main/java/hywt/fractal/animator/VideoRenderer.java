@@ -74,8 +74,8 @@ public class VideoRenderer {
 
         int processors = Runtime.getRuntime().availableProcessors();
         service = Executors.newFixedThreadPool(processors);
-        framePool = new ArrayBlockingQueue<>(processors * 2);
-        for (int i = 0; i < processors * 2; i++) {
+        framePool = new ArrayBlockingQueue<>(processors);
+        for (int i = 0; i < processors; i++) {
             framePool.add(new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR));
         }
 
