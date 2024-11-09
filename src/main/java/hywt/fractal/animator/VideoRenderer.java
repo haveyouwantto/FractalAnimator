@@ -10,11 +10,9 @@ import hywt.fractal.animator.keyframe.ImageLoader;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -31,8 +29,7 @@ public class VideoRenderer {
 
     // Multithreading
     private ExecutorService service;
-    private BlockingQueue<Worker> workers;
-    private BlockingQueue<Worker> imgQueue;
+    private BlockingQueue<BufferedImage> framePool;
 
     private AtomicInteger renderedFrames;
     private int renderedKeyframes;
@@ -77,19 +74,15 @@ public class VideoRenderer {
 
         int processors = Runtime.getRuntime().availableProcessors();
         service = Executors.newFixedThreadPool(processors);
-        workers = new ArrayBlockingQueue<>(processors);
-        for (int i = 0; i < processors; i++) {
-            workers.add(new Worker(this));
+        framePool = new ArrayBlockingQueue<>(processors * 2);
+        for (int i = 0; i < processors * 2; i++) {
+            framePool.add(new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR));
         }
-        imgQueue = new ArrayBlockingQueue<>(4);
 
 
         if (interpolator == null) throw new IllegalStateException("Interpolator not set.");
         process = new FFmpegProcess(width, height, fps, params.ffmpeg(), file, params.param().getParam());
         process.start();
-
-        Thread consumerThread = getThread();
-        consumerThread.start();
 
         startTime = params.startTime();
         endTime = params.endTime();
@@ -101,7 +94,7 @@ public class VideoRenderer {
 
         if (params.startTime() > 0) {
             List<Double> initScales = Collections.nCopies((int) (fps * startTime), 0.0);
-            renderFrame(initScales, manager.get(0), manager.get(1), manager.get(2));
+            renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
         }
 
         FractalImage[] fractalImages = new FractalImage[mergeFrames];
@@ -123,7 +116,7 @@ public class VideoRenderer {
 
                 currentZoom = v;
                 if (currentZoom > i + 1 || interpolator.isOutside(t)) break;
-//                System.out.printf("%.2f %.2f\n", t, v);
+                System.out.printf("%.2f %.2f\n", t, v);
                 scales.add(v);
                 frameNum++;
             }
@@ -134,7 +127,7 @@ public class VideoRenderer {
             }
 
             if (!scales.isEmpty()) {
-                renderFrame(scales,
+                renderFrame(scales, process,
                         fractalImages
                 );
             }
@@ -144,7 +137,7 @@ public class VideoRenderer {
 
         if (params.endTime() > 0) {
             List<Double> endScales = Collections.nCopies((int) (fps * endTime), (double) (manager.size() - 1));
-            renderFrame(endScales, manager.getLast());
+            renderFrame(endScales, process, manager.getLast());
         }
 
         process.finish();
@@ -154,31 +147,10 @@ public class VideoRenderer {
         finished = true;
     }
 
-    private Thread getThread() {
-        Thread consumerThread = new Thread(() -> {
-            try {
-                while (process.getFfmpeg().isAlive()) {
-                    Worker worker;
-                    if ((worker = imgQueue.poll(5, TimeUnit.SECONDS)) != null) {
-                        process.write(((DataBufferByte) worker.fb.getData().getDataBuffer()).getData());
-                        workers.put(worker);
-                    }
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-
-            }
-        });
-        consumerThread.setName("Data Writer Thread");
-        consumerThread.setDaemon(true);
-        return consumerThread;
-    }
-
-    private void renderFrame(List<Double> factors, FractalImage... frames)
+    private void renderFrame(List<Double> factors, FFmpegProcess process, FractalImage... frames)
             throws Exception {
 
-        List<Future<Worker>> futures = new LinkedList<>();
+        List<Future<BufferedImage>> futures = new LinkedList<>();
 
         int baseFactor = factors.get(0).intValue();
 
@@ -191,22 +163,38 @@ public class VideoRenderer {
         double scaleFix = Math.log(width * 1.0 / height) / Math.log(2) - Math.log(images[0].getWidth() * 1.0 / images[0].getHeight()) / Math.log(2);
 
         for (double factor : factors) {
-            Callable<Worker> c = () -> {
-                Worker worker;
-                synchronized (this) {
-                    worker = workers.take();
+            Callable<BufferedImage> c = () -> {
+                BufferedImage buffer = framePool.take();
+                Graphics2D g2d = buffer.createGraphics();
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                int bgWidth = buffer.getWidth();
+                int bgHeight = buffer.getHeight();
+
+                for (int i = 0; i < images.length; i++) {
+                    if (frames[i] != null) {
+                        putImage(images[i], g2d, (factor - baseFactor) - i, bgWidth, bgHeight);
+                    }
                 }
-                worker.draw(images, frames, factor - baseFactor, scaleFix);
-                renderedFrames.incrementAndGet();
-                return worker;
+
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+                for (ScaleIndicator indicator : indicators) {
+                    indicator.draw(g2d, new FractalScale(frames[0].getScale().getZooms() + (factor - baseFactor) + scaleFix), width, height);
+                }
+
+                return buffer;
             };
 
             futures.add(service.submit(c));
         }
 
-        for (Future<Worker> w : futures) {
-            Worker worker = w.get();
-            imgQueue.put(worker);
+        for (Future<BufferedImage> future : futures) {
+            synchronized (this) {
+                BufferedImage image = future.get();
+                process.writeFrame(image);
+                renderedFrames.incrementAndGet();
+                framePool.add(image);
+            }
         }
     }
 
@@ -261,37 +249,5 @@ public class VideoRenderer {
     public void abort() {
         if (process != null)
             process.getFfmpeg().destroy();
-    }
-
-    class Worker {
-        BufferedImage fb;
-        VideoRenderer context;
-
-        Worker(VideoRenderer context) {
-            this.context = context;
-            this.fb = new BufferedImage(context.width, context.height, BufferedImage.TYPE_3BYTE_BGR);
-        }
-
-        void draw(BufferedImage[] images, FractalImage[] frames, double scale, double scaleFix) {
-            BufferedImage buffer = fb;
-            Graphics2D g2d = buffer.createGraphics();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            int bgWidth = buffer.getWidth();
-            int bgHeight = buffer.getHeight();
-
-            for (int i = 0; i < images.length; i++) {
-                if (frames[i] != null) {
-                    putImage(images[i], g2d, scale - i, bgWidth, bgHeight);
-                }
-            }
-
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
-            for (ScaleIndicator indicator : context.indicators) {
-                indicator.draw(g2d, new FractalScale(frames[0].getScale().getZooms() + scale + scaleFix), width, height);
-            }
-
-//            return ((DataBufferByte) fb.getData().getDataBuffer()).getData();
-        }
     }
 }

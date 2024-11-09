@@ -172,11 +172,8 @@ public class GUI extends JFrame implements Exportable {
                 if (loaderConfigure != null && loaderConfigure.get() != null) {
                     if (!this.rendering)
                         generate();
-                    else {
+                    else
                         renderer.abort();
-                        setRendering(false);
-                        progressPanel.stop();
-                    }
                 } else {
                     showError(Localization.get("message.missing_image"));
                 }

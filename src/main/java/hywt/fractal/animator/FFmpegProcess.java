@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
-public class FFmpegProcess extends OutputStream {
+public class FFmpegProcess {
 
     private Process ffmpeg;
     private OutputStream pipe;
@@ -73,20 +73,5 @@ public class FFmpegProcess extends OutputStream {
 
     public Process getFfmpeg() {
         return ffmpeg;
-    }
-
-    @Override
-    public void write(int b) throws IOException {
-        pipe.write(b);
-    }
-
-    @Override
-    public void write(byte[] b) throws IOException {
-        pipe.write(b);
-    }
-
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        pipe.write(b, off, len);
     }
 }
