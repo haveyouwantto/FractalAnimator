@@ -141,7 +141,7 @@ public class VideoRenderer {
         }
 
         process.finish();
-        if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+        if (!service.awaitTermination(10, TimeUnit.SECONDS)) {
             service.shutdownNow();
         }
         finished = true;
@@ -250,5 +250,7 @@ public class VideoRenderer {
     public void abort() {
         if (process != null)
             process.getFfmpeg().destroy();
+
+        service.shutdownNow();
     }
 }
