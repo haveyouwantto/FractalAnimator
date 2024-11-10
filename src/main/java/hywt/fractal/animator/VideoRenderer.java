@@ -182,6 +182,8 @@ public class VideoRenderer {
                     indicator.draw(g2d, new FractalScale(frames[0].getScale().getZooms() + (factor - baseFactor) + scaleFix), width, height);
                 }
 
+                renderedFrames.incrementAndGet();
+
                 return buffer;
             };
 
@@ -192,7 +194,6 @@ public class VideoRenderer {
             synchronized (this) {
                 BufferedImage image = future.get();
                 process.writeFrame(image);
-                renderedFrames.incrementAndGet();
                 framePool.add(image);
             }
         }
