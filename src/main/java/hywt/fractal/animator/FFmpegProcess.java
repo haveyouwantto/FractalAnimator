@@ -26,7 +26,6 @@ public class FFmpegProcess {
                 "-f", "rawvideo",
                 "-s", String.format("%dx%d", width, height),
                 "-i", "-",
-                "-pix_fmt", "yuv420p",
                 "-y",
                 path.getAbsolutePath()));
         param.addAll(param.size() - 2, List.of(additionalParam));
