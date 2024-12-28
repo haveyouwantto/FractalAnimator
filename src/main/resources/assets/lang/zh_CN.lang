@@ -32,6 +32,7 @@ indicator.class.hywt.fractal.animator.indicator.ExponentialScaleIndicator=10\u76
 class.hywt.fractal.animator.ui.FZImageLoaderConfigure=Fractal Zoomer \u52a0\u8f7d\u5668
 class.hywt.fractal.animator.ui.SimpleMandelbrotLoaderConfigure=Mandelbrot
 class.hywt.fractal.animator.ui.KFImageLoaderConfigure=Kalles Fraktaler \u56fe\u50cf\u52a0\u8f7d\u5668
+class.hywt.fractal.animator.ui.MapleMandelMakerLoaderConfigure=Maple Mandel \u5236\u4f5c\u5668
 
 class.hywt.fractal.animator.ui.LinearInterpolatorConfigure=\u7ebf\u6027
 class.hywt.fractal.animator.ui.AccelInterpolatorConfigure=\u52a0\u901f
@@ -54,6 +55,10 @@ image.mandelbrot.iter=\u8fed\u4ee3\u6b21\u6570
 image.fz.description=Fractal Zoomer \u56fe\u50cf\u5e8f\u5217\u5bfc\u5165\u5668
 image.fz.tooltip=Fractal Zoomer \u5e8f\u5217
 image.fz.file=Fractal Zoomer \u8f93\u51fa\u76ee\u5f55
+image.maple.config=\u9009\u62e9\u914d\u7f6e\u6587\u4ef6
+image.maple.description=MapleMandelMaker \u6587\u4ef6
+image.maple.tooltip=config.prop
+image.maple.file=config.prop
 
 message.warning=\u8b66\u544a
 message.error=\u9519\u8bef

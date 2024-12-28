@@ -33,6 +33,7 @@ class.hywt.fractal.animator.ui.FZImageLoaderConfigure=Fractal Zoomer loader
 class.hywt.fractal.animator.ui.SimpleMandelbrotLoaderConfigure=Mandelbrot
 class.hywt.fractal.animator.ui.KFImageLoaderConfigure=Kalles Fraktaler image loader
 class.hywt.fractal.animator.ui.KFBLoaderConfigure=KFB loader
+class.hywt.fractal.animator.ui.MapleMandelMakerLoaderConfigure=Maple Mandel Maker
 
 class.hywt.fractal.animator.ui.LinearInterpolatorConfigure=Linear
 class.hywt.fractal.animator.ui.AccelInterpolatorConfigure=Acceleration
@@ -55,6 +56,10 @@ image.mandelbrot.iter=Iterations
 image.fz.description=Fractal Zoomer image sequence importer
 image.fz.tooltip=Fractal Zoomer sequence
 image.fz.file=Fractal Zoomer output directory
+image.maple.config=Select configuration file
+image.maple.description=MapleMandelMaker files
+image.maple.tooltip=config.prop
+image.maple.file=config.prop
 
 message.warning=Warning
 message.error=Error
