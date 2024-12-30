@@ -143,7 +143,7 @@ public class GUI extends JFrame implements Exportable {
         controls.add(interpPanel);
 
         Class<? extends ScaleIndicator>[] indicatorClasses = new Class[]{
-                KFScaleIndicator.class, FXScaleIndicator.class, OdometerIndicator.class, ExponentialScaleIndicator.class
+                KFScaleIndicator.class, FXScaleIndicator.class, OdometerIndicator.class, ExponentialScaleIndicator.class, GoogologyIndicator.class
         };
 
         indiPanel = new IndicatorSelectorPanel(indicatorClasses);

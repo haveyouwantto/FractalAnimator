@@ -81,6 +81,10 @@ public class MapleMandelMakerLoaderConfigure extends ImageLoaderConfigure {
 
     @Override
     public void importJSON(JSONObject obj) {
-
+        try {
+            loadFile(new File(obj.getString("path")));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

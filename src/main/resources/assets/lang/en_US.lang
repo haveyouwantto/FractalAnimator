@@ -28,6 +28,7 @@ indicator.class.hywt.fractal.animator.indicator.KFScaleIndicator=Kalles Fraktale
 indicator.class.hywt.fractal.animator.indicator.FXScaleIndicator=Fractal eXtreme style
 indicator.class.hywt.fractal.animator.indicator.OdometerIndicator=Odometer style
 indicator.class.hywt.fractal.animator.indicator.ExponentialScaleIndicator=Exp of 10
+indicator.class.hywt.fractal.animator.indicator.GoogologyIndicator=illion numbers
 
 class.hywt.fractal.animator.ui.FZImageLoaderConfigure=Fractal Zoomer loader
 class.hywt.fractal.animator.ui.SimpleMandelbrotLoaderConfigure=Mandelbrot

@@ -28,6 +28,7 @@ indicator.class.hywt.fractal.animator.indicator.KFScaleIndicator=Kalles Fraktale
 indicator.class.hywt.fractal.animator.indicator.FXScaleIndicator=Fractal eXtreme \u98ce\u683c
 indicator.class.hywt.fractal.animator.indicator.OdometerIndicator=\u91cc\u7a0b\u8ba1\u98ce\u683c
 indicator.class.hywt.fractal.animator.indicator.ExponentialScaleIndicator=10\u7684\u6307\u6570
+indicator.class.hywt.fractal.animator.indicator.GoogologyIndicator=\u82f1\u8bed\u5927\u6570
 
 class.hywt.fractal.animator.ui.FZImageLoaderConfigure=Fractal Zoomer \u52a0\u8f7d\u5668
 class.hywt.fractal.animator.ui.SimpleMandelbrotLoaderConfigure=Mandelbrot
