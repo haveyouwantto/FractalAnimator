@@ -10,7 +10,7 @@ public class FXScaleIndicator implements ScaleIndicator {
     private double scale;
 
     public FXScaleIndicator() throws IOException, FontFormatException {
-        font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream());
+        font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Roboto-Regular.ttf").openStream());
         scale = 1;
     }
 

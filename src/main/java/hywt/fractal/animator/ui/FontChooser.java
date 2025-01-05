@@ -146,7 +146,7 @@ public class FontChooser extends JFrame implements Exportable {
 
     private void loadDefaultFont() {
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Inconsolata.ttf").openStream()).deriveFont(20f);
+            font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResource("assets/fonts/Roboto-Regular.ttf").openStream()).deriveFont(20f);
         } catch (FontFormatException | IOException ex) {
             throw new RuntimeException(ex);
         }
