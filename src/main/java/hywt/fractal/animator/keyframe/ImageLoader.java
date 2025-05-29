@@ -7,6 +7,14 @@ public abstract class ImageLoader implements Iterable<FractalImage> {
 
     public abstract int size();
 
+    public FractalImage acquire(int index) {
+        try {
+            return get(index);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public FractalImage getFrameAtZoom(double zoom) {
         for (int i = 0; i < size(); i++) {
             FractalImage frame = get(i);

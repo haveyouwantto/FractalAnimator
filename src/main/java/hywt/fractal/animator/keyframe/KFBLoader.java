@@ -55,11 +55,7 @@ public class KFBLoader extends ImageLoader {
 
     @Override
     public FractalImage get(int index) {
-        try {
-            return frameList.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+        return frameList.get(index);
     }
 
     @Override

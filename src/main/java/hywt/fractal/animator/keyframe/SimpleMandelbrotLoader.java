@@ -28,11 +28,7 @@ public class SimpleMandelbrotLoader extends ImageLoader {
 
     @Override
     public FractalImage get(int index) {
-        try {
-            return frames.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+        return frames.get(index);
     }
 
     @Override

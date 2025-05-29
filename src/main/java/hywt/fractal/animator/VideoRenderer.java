@@ -94,7 +94,7 @@ public class VideoRenderer {
 
         if (params.startTime() > 0) {
             List<Double> initScales = Collections.nCopies((int) (fps * startTime), 0.0);
-            renderFrame(initScales, process, manager.get(0), manager.get(1), manager.get(2));
+            renderFrame(initScales, process, manager.acquire(0), manager.acquire(1), manager.acquire(2));
         }
 
         FractalImage[] fractalImages = new FractalImage[mergeFrames];
@@ -105,7 +105,7 @@ public class VideoRenderer {
         DataOutputStream fos = new DataOutputStream(new FileOutputStream("timeline.bin"));
 
         for (int i = 0; i < manager.size(); i++) {
-            FractalImage frame = manager.get(i);
+            FractalImage frame = manager.acquire(i);
             List<Double> scales = new ArrayList<>();
 
             while (true) {
@@ -123,7 +123,7 @@ public class VideoRenderer {
 
             fractalImages[0] = frame;
             for (int j = 1; j < mergeFrames; j++) {
-                fractalImages[j] = manager.get(i + j);
+                fractalImages[j] = manager.acquire(i + j);
             }
 
             if (!scales.isEmpty()) {
