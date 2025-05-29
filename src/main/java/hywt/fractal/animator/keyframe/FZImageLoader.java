@@ -1,8 +1,10 @@
 package hywt.fractal.animator.keyframe;
 
 import hywt.fractal.animator.Utils;
+import org.json.JSONObject;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 
@@ -17,15 +19,15 @@ public class FZImageLoader extends ImageLoader {
         frameList = new LinkedList<>();
         Arrays.stream(files).forEach(file -> {
             String name = Utils.removeExtension(file);
-            File info = new File(file.getParent(), name + ".info");
-
-            try (Scanner sc = new Scanner(new FileInputStream(info))) {
-                String size = sc.nextLine().split(":")[1].strip();
-
-                frameList.add(new ImageFileFractalImage(file, FractalScale.fromSize(size)));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            File info = new File(file.getParent(), name + ".info.json");
+            try {
+                String source = new String(Files.readAllBytes(info.toPath()));
+                JSONObject object = new JSONObject(source);
+                frameList.add(new ImageFileFractalImage(file, FractalScale.fromSize(object.getString("size"))));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+
         });
 
         Collections.sort(frameList);
@@ -33,11 +35,7 @@ public class FZImageLoader extends ImageLoader {
 
     @Override
     public FractalImage get(int index) {
-        try {
-            return frameList.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+        return frameList.get(index);
     }
 
     @Override
