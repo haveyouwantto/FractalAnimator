@@ -193,7 +193,7 @@ public class VideoRenderer {
         for (Future<BufferedImage> future : futures) {
             synchronized (this) {
                 BufferedImage image = future.get();
-                process.writeFrame(image);
+                process.submitFrame(image);
                 framePool.add(image);
             }
         }
