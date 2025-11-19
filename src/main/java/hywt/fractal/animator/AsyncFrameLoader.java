@@ -13,7 +13,7 @@ public class AsyncFrameLoader {
     private BlockingQueue<Integer> imageQueue;
     public AsyncFrameLoader(ImageLoader loader) {
         this.loader = loader;
-        this.imageQueue = new ArrayBlockingQueue<>(4);
+        this.imageQueue = new ArrayBlockingQueue<>(8);
         this.loaderThread = new Thread(() -> {
             while (true) {
                 try {
@@ -30,7 +30,12 @@ public class AsyncFrameLoader {
     }
 
     public void delegateLoad(int index) {
-        imageQueue.add(index);
+        try {
+            imageQueue.put(index);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public FractalImage getCurrentImage() {
