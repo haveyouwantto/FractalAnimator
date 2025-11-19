@@ -79,8 +79,8 @@ public class VideoRenderer {
             framePool.add(new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR));
         }
 
-
-        if (interpolator == null) throw new IllegalStateException("Interpolator not set.");
+        if (interpolator == null)
+            throw new IllegalStateException("Interpolator not set.");
         process = new FFmpegProcess(width, height, fps, params.ffmpeg(), file, params.param().getParam());
         process.start();
 
@@ -104,6 +104,8 @@ public class VideoRenderer {
 
         DataOutputStream fos = new DataOutputStream(new FileOutputStream("timeline.bin"));
 
+        AsyncFrameLoader asyncLoader = new AsyncFrameLoader(manager);
+
         for (int i = 0; i < manager.size(); i++) {
             FractalImage frame = manager.acquire(i);
             List<Double> scales = new ArrayList<>();
@@ -115,8 +117,9 @@ public class VideoRenderer {
                 fos.writeDouble(v); // debug
 
                 currentZoom = v;
-                if (currentZoom > i + 1 || interpolator.isOutside(t)) break;
-                System.out.printf("%.2f %.2f\n", t, v);
+                if (currentZoom > i + 1 || interpolator.isOutside(t))
+                    break;
+                // System.out.printf("%.2f %.2f\n", t, v);
                 scales.add(v);
                 frameNum++;
             }
@@ -125,14 +128,15 @@ public class VideoRenderer {
             for (int j = 1; j < mergeFrames; j++) {
                 fractalImages[j] = manager.acquire(i + j);
             }
+            // Load next frame in advance
+            asyncLoader.delegateLoad(i + mergeFrames);
 
             if (!scales.isEmpty()) {
                 renderFrame(scales, process,
-                        fractalImages
-                );
+                        fractalImages);
             }
             renderedKeyframes = i + 1;
-            frame.close();
+            frame.close(); // Delete passed frame
         }
 
         if (params.endTime() > 0) {
@@ -160,7 +164,8 @@ public class VideoRenderer {
                 images[i] = frames[i].getImage();
         }
 
-        double scaleFix = Math.log(width * 1.0 / height) / Math.log(2) - Math.log(images[0].getWidth() * 1.0 / images[0].getHeight()) / Math.log(2);
+        double scaleFix = Math.log(width * 1.0 / height) / Math.log(2)
+                - Math.log(images[0].getWidth() * 1.0 / images[0].getHeight()) / Math.log(2);
 
         for (double factor : factors) {
             Callable<BufferedImage> c = () -> {
@@ -179,7 +184,9 @@ public class VideoRenderer {
 
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
                 for (ScaleIndicator indicator : indicators) {
-                    indicator.draw(g2d, new FractalScale(frames[0].getScale().getZooms() + (factor - baseFactor) + scaleFix), width, height);
+                    indicator.draw(g2d,
+                            new FractalScale(frames[0].getScale().getZooms() + (factor - baseFactor) + scaleFix), width,
+                            height);
                 }
 
                 renderedFrames.incrementAndGet();
@@ -200,8 +207,9 @@ public class VideoRenderer {
     }
 
     private void putImage(BufferedImage image, Graphics2D g2d, double factor, int bgWidth, int bgHeight) {
-        double scaleFactor = Math.pow(2, factor) * ((double) (Math.max(bgWidth, bgHeight)) / Math.max(image.getWidth(), image.getHeight()));
-//        System.out.println();
+        double scaleFactor = Math.pow(2, factor)
+                * ((double) (Math.max(bgWidth, bgHeight)) / Math.max(image.getWidth(), image.getHeight()));
+        // System.out.println();
 
         int imgWidth = image.getWidth();
         int imgHeight = image.getHeight();
@@ -213,8 +221,7 @@ public class VideoRenderer {
 
         g2d.setComposite(
                 AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, opacity
-                ));
+                        AlphaComposite.SRC_OVER, opacity));
 
         g2d.drawImage(image, new AffineTransform(scaleFactor, 0, 0, scaleFactor, offsetX, offsetY), null);
     }
