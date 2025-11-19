@@ -20,6 +20,7 @@ public class FFmpegProcess {
 
     private ProcessBuilder builder;
     private BlockingQueue<Raster> frameQueue;
+    private Thread consumerThread;
 
     public FFmpegProcess(int width, int height, double fps, String ffmpeg, File path, String[] additionalParam) {
         ArrayList<String> param = new ArrayList<>(List.of(
@@ -76,7 +77,7 @@ public class FFmpegProcess {
                 }
             }
         };
-        Thread consumerThread = new Thread(consumer);
+        consumerThread = new Thread(consumer);
         consumerThread.setDaemon(true);
         consumerThread.start();
     }
@@ -89,6 +90,11 @@ public class FFmpegProcess {
     }
 
     public void submitFrame(RenderedImage frame) throws InterruptedException {
+        // Check if consumer thread is alive
+        if (consumerThread == null || !consumerThread.isAlive()) {
+            throw new IllegalStateException("Consumer thread has terminated unexpectedly.");
+        }
+
         if (frame == null) throw new NullPointerException("frame is null");
 
         Raster raster = frame.getData();
