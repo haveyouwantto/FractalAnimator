@@ -33,6 +33,7 @@ indicator.class.hywt.fractal.animator.indicator.GoogologyIndicator=\u82f1\u8bed\
 class.hywt.fractal.animator.ui.FZImageLoaderConfigure=Fractal Zoomer \u52a0\u8f7d\u5668
 class.hywt.fractal.animator.ui.SimpleMandelbrotLoaderConfigure=Mandelbrot
 class.hywt.fractal.animator.ui.KFImageLoaderConfigure=Kalles Fraktaler \u56fe\u50cf\u52a0\u8f7d\u5668
+class.hywt.fractal.animator.ui.ImaginaLoaderConfigure=Imagina \u5e8f\u5217\u52a0\u8f7d\u5668
 class.hywt.fractal.animator.ui.MapleMandelMakerLoaderConfigure=Maple Mandel \u5236\u4f5c\u5668
 
 class.hywt.fractal.animator.ui.LinearInterpolatorConfigure=\u7ebf\u6027
@@ -60,6 +61,13 @@ image.maple.config=\u9009\u62e9\u914d\u7f6e\u6587\u4ef6
 image.maple.description=MapleMandelMaker \u6587\u4ef6
 image.maple.tooltip=config.prop
 image.maple.file=config.prop
+image.imagina.description=Imagina \u7f29\u653e\u5e8f\u5217\uff1a\u9009\u62e9\u653e\u7740\u5bfc\u51fa\u8bb0\u5f55\uff08.imz\uff09\u4e0e\u5e27\u7684\u76ee\u5f55\u3002\u8c03\u8272\u677f\u6587\u4ef6\u6bcf\u884c\u4e00\u4e2a #rgb\uff08\u5982 #f00 \u6216 #ff0000\uff09\uff0c\u7559\u7a7a\u7528\u5185\u7f6e\u8c03\u8272\u677f\uff1b\u989c\u8272\u5bc6\u5ea6\u4e3a\u6bcf n \u6b21\u8fed\u4ee3\u8fdb\u4e00\u4e2a\u989c\u8272\u3002
+image.imagina.tooltip=Imagina \u7f29\u653e\u5e8f\u5217
+image.imagina.file=Imagina \u8f93\u51fa\u76ee\u5f55
+image.imagina.palette=\u8c03\u8272\u677f
+image.imagina.palette.tooltip=\u6bcf\u884c\u4e00\u4e2a #rgb \u989c\u8272
+image.imagina.density=\u989c\u8272\u5bc6\u5ea6
+image.imagina.density.tooltip=\u6bcf n \u6b21\u8fed\u4ee3\u8fdb\u4e00\u4e2a\u989c\u8272
 
 message.warning=\u8b66\u544a
 message.error=\u9519\u8bef

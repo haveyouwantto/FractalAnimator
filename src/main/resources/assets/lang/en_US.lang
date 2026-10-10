@@ -34,6 +34,7 @@ class.hywt.fractal.animator.ui.FZImageLoaderConfigure=Fractal Zoomer loader
 class.hywt.fractal.animator.ui.SimpleMandelbrotLoaderConfigure=Mandelbrot
 class.hywt.fractal.animator.ui.KFImageLoaderConfigure=Kalles Fraktaler image loader
 class.hywt.fractal.animator.ui.KFBLoaderConfigure=KFB loader
+class.hywt.fractal.animator.ui.ImaginaLoaderConfigure=Imagina sequence loader
 class.hywt.fractal.animator.ui.MapleMandelMakerLoaderConfigure=Maple Mandel Maker
 
 class.hywt.fractal.animator.ui.LinearInterpolatorConfigure=Linear
@@ -61,6 +62,13 @@ image.maple.config=Select configuration file
 image.maple.description=MapleMandelMaker files
 image.maple.tooltip=config.prop
 image.maple.file=config.prop
+image.imagina.description=Imagina zoom sequence: pick the directory with the export record (.imz) and its frames. Palette file: one #rgb per line (#f00 or #ff0000), empty for the built in palette. Colour density: one colour per n iterations.
+image.imagina.tooltip=Imagina zoom sequence
+image.imagina.file=Imagina output directory
+image.imagina.palette=Palette
+image.imagina.palette.tooltip=One #rgb colour per line
+image.imagina.density=Colour density
+image.imagina.density.tooltip=One colour per n iterations
 
 message.warning=Warning
 message.error=Error

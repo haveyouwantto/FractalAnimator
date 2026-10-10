@@ -1,5 +1,12 @@
 package hywt.fractal.animator;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Palette {
 
     private static int[][] PALETTE = {{1, 1, 1}, {205, 92, 92}, {240, 128, 128}, {255, 0, 0}, {178, 34, 34}, {139, 0, 0},
@@ -57,5 +64,55 @@ public class Palette {
         int g = Math.round(color[1]);
         int b = Math.round(color[2]);
         return (r << 16) | (g << 8) | b;
+    }
+
+    /**
+     * Gets the colour of the escape value 'it', with 'step' iterations between
+     * two entries of the palette (the colour density).  Values below zero are
+     * inside the set and come out black.  Unlike {@link #getColor(int)} this
+     * keeps the fraction of a smooth iteration value.
+     */
+    public int getColor(double it, double step) {
+        if (!(it >= 0) || !(step > 0)) {
+            return 0;
+        }
+        float[] color = colorTrans((float) (it / step));
+        int r = Math.round(color[0]);
+        int g = Math.round(color[1]);
+        int b = Math.round(color[2]);
+        return (r << 16) | (g << 8) | b;
+    }
+
+    /**
+     * Reads a palette file which holds one colour per line, written as #rgb or
+     * #rrggbb (the # may be left out, #f00 is short for #ff0000).  Empty lines
+     * are skipped.
+     */
+    public static Palette load(File file) throws IOException {
+        List<int[]> colors = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            for (int number = 1; (line = reader.readLine()) != null; number++) {
+                String text = line.trim();
+                if (text.isEmpty()) continue;
+                if (text.startsWith("#")) text = text.substring(1);
+                if (text.length() == 3) {
+                    StringBuilder expanded = new StringBuilder(6);
+                    for (int i = 0; i < 3; i++) expanded.append(text.charAt(i)).append(text.charAt(i));
+                    text = expanded.toString();
+                }
+                if (text.length() != 6) throw new IOException("line " + number + " is not a colour: " + line);
+                try {
+                    colors.add(new int[]{
+                            Integer.parseInt(text.substring(0, 2), 16),
+                            Integer.parseInt(text.substring(2, 4), 16),
+                            Integer.parseInt(text.substring(4, 6), 16)});
+                } catch (NumberFormatException e) {
+                    throw new IOException("line " + number + " is not a colour: " + line);
+                }
+            }
+        }
+        if (colors.isEmpty()) throw new IOException("the palette file has no colours: " + file.getName());
+        return new Palette(colors.toArray(new int[0][]));
     }
 }
